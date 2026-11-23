@@ -20824,7 +20824,7 @@ fr:{
  checkBad:(a,b)=>`Recomptage indépendant du texte : ${a} marque(s) « à remédier » trouvée(s), ${b} ligne(s) à remédier dans le tableau. Écart à vérifier.`,
  announced:n=>`Le rapport annonce ${n} remarque(s).`, missing:"Références marquées à remédier absentes du tableau :",
  checkNA:"—", checkDone:"OK", checkGap:"Écart",
- mOrg:"Organisme", mDate:"Date du rapport", mDev:"Appareil", mDrive:"Entraînement",
+ mOrg:"Organisme", mConcl:"Conclusion SECT", mNext:"Prochain contrôle", mAR:"Analyse de risques du", mEcheance:"Attestation de régularisation attendue avant", mDepassee:"échéance dépassée", mDate:"Date du rapport", mDev:"Appareil", mDrive:"Entraînement",
  noCode:"Point d'alerte : code non trouvé.", unknownCode:c=>`Code ${c} absent du référentiel.`, inactiveCode:c=>`Code ${c} désactivé dans le référentiel.`, pendingCode:c=>`Code ${c} : modification proposée, pas encore validée par le référent.`,
  statusGuess:"Statut non indiqué clairement dans le rapport : à vérifier.",
  sameRefOtherText:"Même référence qu'une remarque validée, mais texte différent : vérifier.",
@@ -20921,7 +20921,7 @@ nl:{
  checkBad:(a,b)=>`Onafhankelijke hertelling van de tekst: ${a} markering(en) « te verhelpen » gevonden, ${b} te verhelpen regel(s) in de tabel. Verschil na te kijken.`,
  announced:n=>`Het verslag vermeldt ${n} opmerking(en).`, missing:"Referenties gemarkeerd als te verhelpen die ontbreken in de tabel:",
  checkNA:"—", checkDone:"OK", checkGap:"Verschil",
- mOrg:"Keuringsorganisme", mDate:"Datum verslag", mDev:"Toestel", mDrive:"Aandrijving",
+ mOrg:"Keuringsorganisme", mConcl:"Conclusie EDTC", mNext:"Volgende keuring", mAR:"Risicoanalyse van", mEcheance:"Regularisatieattest verwacht vóór", mDepassee:"termijn verstreken", mDate:"Datum verslag", mDev:"Toestel", mDrive:"Aandrijving",
  noCode:"Waarschuwing: code niet gevonden.", unknownCode:c=>`Code ${c} staat niet in de referentie.`, inactiveCode:c=>`Code ${c} is gedeactiveerd in de referentie.`, pendingCode:c=>`Code ${c}: wijziging voorgesteld, nog niet gevalideerd door de referent.`,
  statusGuess:"Status niet duidelijk vermeld in het verslag: na te kijken.",
  sameRefOtherText:"Zelfde referentie als een gevalideerde opmerking, maar andere tekst: nakijken.",
@@ -21262,8 +21262,38 @@ const PATTERNS = [
   {id:"num", rx:/^\s*[■□☐☒]?\s*(\d{1,2}(?:\.\d{1,2}){1,3}|[A-Z]\.\d{1,2}(?:\.\d{1,2})?)[.)]?\s+([A-Za-zÀ-ÿ].{6,})$/},
   {id:"box", rx:/^\s*([■☒☑])\s*(.{6,})$/}
 ];
-function splitRemarks(lines){
+/* Rapports d'inspection (BTV, Vinçotte, OCB…) : sections « Infractions » / « Remarques » avec points numérotés */
+const SEC_RX = /^\s*\d+(?:\.\d+)*\.?\s*(infractions?|inbreuken|remarques|opmerkingen|constatations|vaststellingen|non[- ]conformites?)\b(.*)$/i;
+const SEC_END_RX = /^\s*\d+\.\s+[A-ZÀ-Ü][A-ZÀ-Ü' ]{3,}/;
+const FOOTER_RX = /^(RL\d|VMA\b|\d{4}-\d{6}-\d{2}$|p\.\s?\d+\s*\/\s*\d+$|(page|pagina|blz)\s*\d+)/i;
+const DEVICE_RX = /^(ascenseur|lift|appareil|toestel|monte-charge|goederenlift|plate-forme|platform)\s+-\s+(.+)$/i;
+function splitSections(lines, lang){
+  const blocks = []; let sec = null, cur = null, dev = "", devs = new Set();
+  const close = () => { if (cur) { blocks.push(cur); cur = null; } };
+  for (const l of lines) {
+    const t = l.t.trim(); if (!t || FOOTER_RX.test(t)) continue;
+    const h = t.match(SEC_RX);
+    if (h) { close(); const w = norm(h[1]); const both = /remarques|opmerkingen/.test(norm(h[2])) && /infraction|inbreuk/.test(w);
+      sec = both ? null : (/infraction|inbreuk|constatation|vaststelling|non.?conform/.test(w) ? "inf" : "rem"); continue; }
+    if (SEC_END_RX.test(t) && !/^\d+\s+[a-zà-ü]/.test(t)) { close(); sec = null; continue; }
+    if (!sec) continue;
+    const d = t.match(DEVICE_RX); if (d) { close(); const f = d[2].split(/\s+-\s+/); dev = (f[1] || f[0] || "").trim(); devs.add(dev); continue; }
+    const it = t.match(/^(\d{1,2})\s+(?![\/.\-]\d)(\S.*)$/);
+    if (it && /^[A-Za-zÀ-ÿ(«"']/.test(it[2])) { close(); cur = {kind:sec, n:it[1], dev, raw:t, body:it[2], page:l.p}; continue; }
+    if (cur && cur.body.length < 1400) { cur.raw += "\n" + t; cur.body += " " + t; }
+  }
+  close();
+  const info = lines.find(l => /^\s*info\s+(btv|vincotte|organisme|sect|edtc|ocb|sgs)\b/i.test(l.t));
+  if (blocks.length && info) blocks.push({kind:"info", n:"", dev:"", raw:info.t, body:info.t.replace(/^\s*info\s+\S+[\s:]*/i, "").replace(/:\s*$/, ""), page:info.p});
+  const lbl = {inf: lang === "nl" ? "Inbr." : "Infr.", rem: lang === "nl" ? "Opm." : "Rem."};
+  lbl.info = "Info";
+  return blocks.map(b => ({ref: `${lbl[b.kind]}${b.n ? " " + b.n : ""}` + (devs.size > 1 && b.dev ? ` (${b.dev})` : ""), raw:b.raw, body:b.body, page:b.page,
+    st: b.kind === "inf" ? "remedier" : (/conclusion negative|negatieve conclusie|decision negati|interdiction|buiten dienst/.test(norm(b.body)) || b.kind === "info" ? "surveiller" : "info"), dev:b.dev, kind:b.kind}));
+}
+function splitRemarks(lines, lang){
   // lines: [{t, p}]
+  const sec = splitSections(lines, lang);
+  if (sec.length) return {blocks: sec, method:"sections"};
   let best = null;
   const need = Math.min(2, lines.filter(l => l.t.trim()).length);
   for (const P of PATTERNS) {
@@ -21305,17 +21335,42 @@ function cleanBody(s){
 }
 function readMeta(text){
   const n = norm(text), m = {};
-  const orgs = [["vincotte","Vinçotte"],["btv","BTV"],["sgs","SGS"],["normec","Normec"],["konhef","Konhef"],["ocb","OCB"],["procontrol","Procontrol"],["aib","AIB-Vinçotte"],["kiwa","Kiwa"],["certinergie","Certinergie"]];
+  const orgs = [["normec btv","Normec BTV"],["vincotte","Vinçotte"],["btv","BTV"],["sgs","SGS"],["normec","Normec"],["konhef","Konhef"],["ocb","OCB"],["procontrol","Procontrol"],["aib","AIB-Vinçotte"],["kiwa","Kiwa"],["certinergie","Certinergie"]];
   for (const [k,v] of orgs) if (new RegExp("\\b"+k+"\\b").test(n)) { m.organisme = v; break; }
   const d = text.match(/\b(\d{1,2}[\/.-]\d{1,2}[\/.-](?:19|20)\d{2})\b/); if (d) m.date_rapport = d[1];
   const cnt = rx => (n.match(rx) || []).length;
   const hy = cnt(/(ascenseur|appareil|lift|entrainement|aandrijving|groupe|centrale|elevateur) hydrauli|hydraulische (lift|aandrijving|groep)|\bverin\b|\bvijzel\b|\bzuiger\b|\bpiston\b/g);
-  const tr = cnt(/(ascenseur|appareil|lift|entrainement|aandrijving) (a |electrique a )?(traction|cables)|tractielift|kabellift|machine de traction|treuil|tractiemachine|poulie de traction|tractieschijf|contrepoids|tegengewicht/g);
+  const tr = cnt(/(ascenseur|appareil|lift|entrainement|aandrijving) (a |electrique a )?(traction|cables)|tractielift|kabellift|machine de traction|treuil|tractiemachine|poulie de traction|tractieschijf/g); // « contrepoids » exclu : présent dans les listes de contrôle standard
   if (hy > tr) m.entrainement = /indirect|1:2|2:1|mouflage/.test(n) ? "Hydraulique indirect" : (/\bdirect\b/.test(n) ? "Hydraulique direct" : "Hydraulique");
   else if (tr > hy) m.entrainement = "Traction";
   const ap = text.match(/(?:n[°o]\s*(?:d'?\s*)?(?:appareil|fabrication|de serie)|toestel(?:nummer|nr)?|fabricatienummer)\s*[:.]?\s*([A-Z0-9][A-Z0-9\/.\-]{2,})/i); if (ap) m.appareil = ap[1];
+  const nx = n.match(/(?:controle suivant|prochain controle|volgende (?:keuring|controle))\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/); if (nx) m.prochain = nx[1];
+  const ar = n.match(/analyse de risques? effectuee le\s*([\d\/ ]{8,14}\d)\s*(?:nr|n)?[°o.]?\s*([\d-]{6,})?/); if (ar) m.analyse = (ar[1].replace(/\s+/g, "") + (ar[2] ? " n° " + ar[2] : ""));
+  const cc = text.match(/\((?:CONCLUSION|CONCLUSIE)\s*:\s*([A-EN-V])\)/i); if (cc) m.conclusion = cc[1].toUpperCase();
+  const ec = n.match(/(?:delivree avant le|date limite[^.]{0,120}?est le|uiterlijk op|ten laatste op)\s*(\d{1,2}\/\d{1,2}\/\d{4})/); if (ec) m.echeance = ec[1];
+  if (m.echeance && m.date_rapport) { const iso = s => s.split(/[\/.-]/).reverse().map(x => x.padStart(2, "0")).join("-"); if (iso(m.echeance) < iso(m.date_rapport)) m.echeanceDepassee = "1"; }
   const an = n.match(/(\d{1,3})\s*(?:remarques|observations|opmerkingen|non-conformites|inbreuken|vaststellingen)\b/); if (an) m.annonce = an[1];
   return m;
+}
+/* Infraction « modernisation non clôturée » : pas de code unique (c'est l'offre de levée des remarques de l'analyse de risques) */
+const MOD_OVERDUE_RX = /travaux de modernisation|modernisering(swerken)?|analyse de risque|risicoanalyse/;
+const MOD_OVERDUE = {
+  fr:{e:"Les travaux de mise en conformité issus de l'analyse de risques ne sont pas clôturés. Le SECT a laissé l'ascenseur en service (conclusion B), mais la répétition de cette infraction peut entraîner une conclusion négative et l'arrêt de l'appareil.",
+      s:"Réaliser les travaux de l'analyse de risques (offre de levée des remarques sur base du rapport d'analyse de risques), puis faire réaliser l'inspection avant remise en service par le SECT auteur de l'analyse pour obtenir l'attestation de régularisation."},
+  nl:{e:"De werken uit de risicoanalyse zijn niet afgerond. De EDTC laat de lift in dienst (conclusie B), maar herhaling van deze inbreuk kan tot een negatieve conclusie en buitendienststelling leiden.",
+      s:"De werken uit de risicoanalyse uitvoeren (offerte voor het wegwerken van de opmerkingen op basis van het risicoanalyseverslag) en daarna de keuring vóór herindienststelling laten uitvoeren door de EDTC die de risicoanalyse opmaakte, om het regularisatieattest te bekomen."}};
+/* Recomptage indépendant pour les rapports d'inspection : marqueurs « (CONCLUSION: X) » dans la section Infractions */
+function recountSections(lines, rows){
+  let inInf = false, conc = 0, items = 0;
+  for (const l of lines) {
+    const t = l.t.trim(), h = t.match(SEC_RX);
+    if (h) { const w = norm(h[1]); inInf = /infraction|inbreuk|constatation|vaststelling|non.?conform/.test(w) && !/remarques|opmerkingen/.test(norm(h[2])); continue; }
+    if (SEC_END_RX.test(t) && !/^\d+\s+[a-zà-ü]/.test(t)) { inInf = false; continue; }
+    if (!inInf) continue;
+    conc += (t.match(/\((?:conclusion|conclusie)\s*:\s*[a-ev]\)/gi) || []).length;
+    if (/^\d{1,2}\s+[A-Za-zÀ-ÿ]/.test(t)) items++;
+  }
+  return {count: conc || items, missing: []};
 }
 function recount(lines, rows){
   // comptage indépendant : lignes portant une marque « à remédier » (case pleine suivie du libellé, ou libellé seul), légendes exclues
@@ -21335,6 +21390,8 @@ function recount(lines, rows){
 }
 
 /* ---------- Lecture PDF ---------- */
+/* Certains PDF (BTV…) codent l'apostrophe en « ¶ » et les guillemets en « ³ … ´ » */
+const fixGlyphs = s => /[¶³´]/.test(s) ? s.replace(/\s*¶\s*/g, "’").replace(/³/g, "«").replace(/´/g, "»") : s;
 async function pdfLines(file){
   const pdf = await pdfjsLib.getDocument({data: await file.arrayBuffer(), isEvalSupported:false, useSystemFonts:true, disableFontFace:true}).promise;
   const lines = [];
@@ -21347,7 +21404,7 @@ async function pdfLines(file){
     let lastY = null;
     for (const y of ys) {
       if (lastY !== null && lastY - y > 22) lines.push({t:"", p});
-      const t = rowsMap.get(y).sort((a,b) => a.x - b.x).map(i => i.s).join(" ").replace(/\s+/g," ").trim();
+      const t = fixGlyphs(rowsMap.get(y).sort((a,b) => a.x - b.x).map(i => i.s).join(" ")).replace(/\s+/g," ").trim();
       if (t) lines.push({t, p});
       lastY = y;
     }
@@ -21360,15 +21417,18 @@ async function pdfLines(file){
 function analyseLines(lines, lang){
   const full = lines.map(l => l.t).join("\n");
   const meta = readMeta(full);
-  const {blocks, method} = splitRemarks(lines);
+  const {blocks, method} = splitRemarks(lines, lang);
   meta.methode = method;
+  if (method === "sections" && !meta.appareil) { const dv = blocks.find(b => b.dev); if (dv) meta.appareil = dv.dev; }
   const rows = blocks.map(b => {
-    const stx = statusOf(b.raw), rec = recognise(b.ref, b.body, lang);
+    const stx = b.st ? {st:b.st, sure:true} : statusOf(b.raw);
+    let rec = recognise(b.ref, b.body, lang);
+    if (b.kind === "inf" && rec.source === "none" && MOD_OVERDUE_RX.test(norm(b.body))) rec = {...rec, e:MOD_OVERDUE[lang].e, s:MOD_OVERDUE[lang].s, zone:"GEN"};
     return mkRow({ref:b.ref, page:b.page, statut:stx.st, statusGuess:!stx.sure, texte:cleanBody(b.body).slice(0,1200),
       explication:rec.e, solution:rec.s, code:rec.code, intitule:rec.intitule, zone:rec.zone, source:rec.source, confiance:rec.conf, alts:rec.alts, warn:rec.warn,
       mesure:measureOf(b.body, lang), include: stx.st === "remedier" && stx.sure});
   });
-  const rc = recount(lines, rows);
+  const rc = method === "sections" ? recountSections(lines, rows) : recount(lines, rows);
   return {meta, rows, check:{count: rc.count, missing: rc.missing, annonce: meta.annonce || ""}, textLen: full.replace(/\s/g,"").length};
 }
 function mkRow(o){
@@ -21459,7 +21519,8 @@ function renderApps(){
 function renderMeta(){
   const L = T[S.lang], a = curApp(), m = a.meta || {}, it = [];
   const add = (k, v) => { if (v) it.push(`<span>${esc(L[k])} : <b>${esc(v)}</b></span>`); };
-  add("mOrg", m.organisme); add("mDate", m.date_rapport); add("mDev", m.appareil); add("mDrive", driveLabel(a, S.lang));
+  add("mOrg", m.organisme); add("mDate", m.date_rapport); add("mDev", m.appareil); add("mDrive", driveLabel(a, S.lang)); add("mConcl", m.conclusion); add("mNext", m.prochain); add("mAR", m.analyse);
+  if (m.echeance) it.push(`<span class="${m.echeanceDepassee ? "pill crit" : ""}">${esc(L.mEcheance)} : <b>${esc(m.echeance)}</b>${m.echeanceDepassee ? " — " + esc(L.mDepassee) : ""}</span>`);
   if (a.fichier) it.push(`<span class="muted">${esc(a.fichier)}${a.analyseLe ? " · " + esc(fmtDate(a.analyseLe)) : ""}</span>`);
   $("#meta").innerHTML = it.join("");
 }
@@ -21533,7 +21594,9 @@ const refreshBtn = () => { $("#analyze").disabled = !S.file && !$("#paste").valu
 
 /* ---------- Analyse ---------- */
 async function analyze(){
-  const L = T[S.lang], a = curApp(), lang = $("#outlang").value;
+  const lang = $("#outlang").value;
+  if (S.dossier.exemple) { S.dossier = newDossier(); S.appIdx = 0; fillDossierForm(); fillAppForm(); $("#outlang").value = lang; curApp().outLang = lang; } // ne jamais analyser dans l'exemple fictif
+  const L = T[S.lang], a = curApp();
   $("#msg").className = "notice hidden";
   if (a.rows.length && !S.dossier.exemple && !confirmTwice("reanalyze-" + a.id, L.reanalyzeWarn)) return;
   let lines = [];
@@ -21633,7 +21696,8 @@ function appInfo(a, lang){
   const L = T[lang], m = a.meta || {}, o = [];
   if (a.numero) o.push(`${L.aNum} ${a.numero}`);
   const dr = driveLabel(a, lang); if (dr) o.push(dr);
-  if (m.organisme) o.push(m.organisme); if (m.date_rapport) o.push(`${L.mDate} ${m.date_rapport}`);
+  if (m.organisme) o.push(m.organisme); if (m.date_rapport) o.push(`${L.mDate} ${m.date_rapport}`); if (m.conclusion) o.push(`${L.mConcl} ${m.conclusion}`); if (m.prochain) o.push(`${L.mNext} ${m.prochain}`); if (m.analyse) o.push(`${L.mAR} ${m.analyse}`);
+  if (m.echeance) o.push(`${L.mEcheance} ${m.echeance}${m.echeanceDepassee ? " (" + L.mDepassee + ")" : ""}`);
   return o.join(" · ");
 }
 function checkLine(a, lang){
