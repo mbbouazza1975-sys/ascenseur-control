@@ -20808,7 +20808,7 @@ fr:{
  step1:"Rapport de l'appareil sélectionné", dropTitle:"Déposer le rapport PDF ici", dropHint:"Analyse de risques ou rapport de visite en PDF texte (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"ou coller le texte du rapport", pastePh:"Collez ici le texte (copié depuis le PDF, Word ou un mail). Une remarque par ligne ou par paragraphe.",
  fDrive:"Type d'entraînement", dAuto:"Détecter dans le rapport", dTraction:"Traction à câbles", dHydroD:"Hydraulique direct", dHydroI:"Hydraulique indirect",
- fOutLang:"Langue du tableau", analyze:"Analyser le rapport", reanalyzeWarn:"Cet appareil a déjà un tableau. Cliquez à nouveau sur « Analyser » pour le remplacer.",
+ fOutLang:"Langue du tableau", analyze:"Analyser le rapport", reanalyzeWarn:"", analyzing:"Analyse en cours…", undoAnalyse:"Restaurer le tableau précédent", undone:"Tableau précédent restauré.",
  summary:"Synthèse de l'appareil", exampleFlag:"EXEMPLE FICTIF — déposez un rapport pour l'analyser",
  fAll:"Toutes", fRem:"À remédier", fAlert:"À vérifier", fInfo:"Info / à surveiller",
  xScopeD:"Export : tout le dossier", xScopeA:"Export : cet appareil",
@@ -20905,7 +20905,7 @@ nl:{
  step1:"Verslag van het geselecteerde toestel", dropTitle:"PDF-verslag hier neerzetten", dropHint:"Risicoanalyse of keuringsverslag als tekst-PDF (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"of de tekst van het verslag plakken", pastePh:"Plak hier de tekst (gekopieerd uit de PDF, Word of een mail). Eén opmerking per regel of per alinea.",
  fDrive:"Aandrijving", dAuto:"Uit het verslag halen", dTraction:"Tractie (kabels)", dHydroD:"Hydraulisch direct", dHydroI:"Hydraulisch indirect",
- fOutLang:"Taal van de tabel", analyze:"Verslag analyseren", reanalyzeWarn:"Dit toestel heeft al een tabel. Klik nogmaals op « Analyseren » om ze te vervangen.",
+ fOutLang:"Taal van de tabel", analyze:"Verslag analyseren", reanalyzeWarn:"", analyzing:"Bezig met analyseren…", undoAnalyse:"Vorige tabel terugzetten", undone:"Vorige tabel teruggezet.",
  summary:"Overzicht van het toestel", exampleFlag:"FICTIEF VOORBEELD — zet een verslag neer om het te analyseren",
  fAll:"Alle", fRem:"Te verhelpen", fAlert:"Na te kijken", fInfo:"Info / op te volgen",
  xScopeD:"Export: heel het dossier", xScopeA:"Export: dit toestel",
@@ -21496,7 +21496,7 @@ function persist(){
 function leaveExample(){ if (S.dossier && S.dossier.exemple) { S.dossier.exemple = false; $("#example-flag").classList.add("hidden"); } }
 
 async function openDossier(d){
-  S.dossier = d; S.appIdx = 0; S.file = null; $("#file-info").innerHTML = ""; $("#paste").value = "";
+  S.dossier = d; S.appIdx = 0; S.file = null; S.undo = null; $("#file-info").innerHTML = ""; $("#paste").value = ""; showMsg("");
   if (!d.exemple) await DB.set("lastDossier", d.id);
   fillDossierForm(); renderDossier(); showView("dossier");
 }
@@ -21598,25 +21598,35 @@ async function analyze(){
   if (S.dossier.exemple) { S.dossier = newDossier(); S.appIdx = 0; fillDossierForm(); fillAppForm(); $("#outlang").value = lang; curApp().outLang = lang; } // ne jamais analyser dans l'exemple fictif
   const L = T[S.lang], a = curApp();
   $("#msg").className = "notice hidden";
-  if (a.rows.length && !S.dossier.exemple && !confirmTwice("reanalyze-" + a.id, L.reanalyzeWarn)) return;
-  let lines = [];
+  const btn = $("#analyze"), label = btn.innerHTML;
+  btn.disabled = true; btn.textContent = L.analyzing;
+  let lines = [], res;
   try {
     if (S.file) lines = await pdfLines(S.file);
     const pasted = $("#paste").value;
     if (pasted.trim()) lines = lines.concat(pasted.split(/\r?\n/).map(t => ({t, p:""})));
-  } catch (e) { showMsg(L.pdfErr, "crit"); return; }
-  const res = analyseLines(lines, lang);
+    res = analyseLines(lines, lang);
+  } catch (e) { btn.innerHTML = label; refreshBtn(); showMsg(L.pdfErr + " (" + (e && e.message || e) + ")", "crit"); return; }
+  btn.innerHTML = label; refreshBtn();
   if (res.textLen < 40) { showMsg(S.file ? L.scanned : L.nothing, "warn"); return; }
   if (!res.rows.length) { showMsg(L.nothing, "warn"); return; }
   leaveExample();
+  // l'ancien tableau est gardé pour pouvoir le restaurer (plus de double clic)
+  const previous = a.rows.length ? {meta:a.meta, rows:a.rows, check:a.check, fichier:a.fichier, analyseLe:a.analyseLe, outLang:a.outLang} : null;
   Object.assign(a, {meta:res.meta, rows:res.rows, check:res.check, outLang:lang, fichier: S.file ? S.file.name : "", analyseLe: nowIso()});
+  S.undo = previous ? {appId:a.id, data:previous} : null;
   if (!a.numero && res.meta.appareil) a.numero = res.meta.appareil;
   if (!S.dossier.nom && !a.nom && res.meta.appareil) a.nom = "";
   renderDossier(); persist();
-  showMsg(L.done(res.rows.length), "info");
+  showMsg(L.done(res.rows.length) + (S.file ? " — " + S.file.name : ""), "info");
+  if (previous) $("#msg").insertAdjacentHTML("beforeend", ` <button id="undo-analyse" class="btn ghost" type="button">${esc(L.undoAnalyse)}</button>`);
   $("#tiles").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
 }
-function showMsg(txt, kind){ const m = $("#msg"); if (!txt) { m.className = "notice hidden"; return; } m.className = "notice " + (kind || "info"); m.textContent = txt; }
+function undoAnalyse(){
+  const a = curApp(); if (!S.undo || S.undo.appId !== a.id) return;
+  Object.assign(a, S.undo.data); S.undo = null; renderDossier(); persist(); showMsg(T[S.lang].undone, "info");
+}
+function showMsg(txt, kind){ const m = $("#msg"); if (!txt) { m.className = "notice hidden"; m.textContent = ""; return; } m.className = "notice " + (kind || "info"); m.textContent = txt; }
 
 /* ---------- Mémoriser une ligne ---------- */
 async function learn(r){
@@ -21660,13 +21670,14 @@ function bindDossier(){
   $("#drive").addEventListener("change", e => { curApp().entrainement = e.target.value; persist(); renderDossier(); });
   $("#outlang").addEventListener("change", e => { curApp().outLang = e.target.value; persist(); renderTable(); renderRecap(); });
   $("#apps").addEventListener("click", e => { const b = e.target.closest("[data-app]"); if (!b) return; S.appIdx = +b.dataset.app; S.file = null; $("#file-info").innerHTML = ""; $("#paste").value = ""; showMsg(""); renderDossier(); });
-  $("#a-add").addEventListener("click", () => { leaveExample(); S.dossier.appareils.push(newApp()); S.appIdx = S.dossier.appareils.length - 1; S.file = null; $("#file-info").innerHTML = ""; $("#paste").value = ""; renderDossier(); persist(); $("#a-nom").focus(); });
+  $("#a-add").addEventListener("click", () => { leaveExample(); S.dossier.appareils.push(newApp()); S.appIdx = S.dossier.appareils.length - 1; S.file = null; $("#file-info").innerHTML = ""; $("#paste").value = ""; showMsg(""); renderDossier(); persist(); $("#a-nom").focus(); });
   $("#a-dup").addEventListener("click", () => { leaveExample(); const c = clone(curApp()); c.id = uid(); c.nom = (c.nom || appName(c, S.appIdx)) + L().copySuffix; c.rows.forEach(r => r.id = uid()); S.dossier.appareils.splice(S.appIdx + 1, 0, c); S.appIdx++; renderDossier(); persist(); });
   $("#a-del").addEventListener("click", () => { if (S.dossier.appareils.length < 2) { toast(L().lastApp); return; } if (!confirmTwice("delapp-" + curApp().id, L().confirmDelApp)) return; S.dossier.appareils.splice(S.appIdx, 1); S.appIdx = Math.max(0, S.appIdx - 1); renderDossier(); persist(); });
 
   // rapport
   $("#analyze").addEventListener("click", analyze);
-  $("#file").addEventListener("change", e => takeFile(e.target.files[0]));
+  $("#msg").addEventListener("click", e => { if (e.target.id === "undo-analyse") undoAnalyse(); });
+  $("#file").addEventListener("change", e => { takeFile(e.target.files[0]); e.target.value = ""; }); // permet de reprendre le même fichier
   $("#paste").addEventListener("input", refreshBtn);
   const drop = $("#drop");
   ["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
@@ -21682,7 +21693,7 @@ function bindDossier(){
   $("#x-xlsx").addEventListener("click", exportXlsx);
   $("#x-copy").addEventListener("click", exportCopy);
 }
-function takeFile(f){ if (!f) return; S.file = f; $("#file-info").innerHTML = `<span class="file-chip">${esc(f.name)} · ${(f.size / 1048576).toFixed(1)} Mo</span>`; refreshBtn(); }
+function takeFile(f){ if (!f) return; S.file = f; showMsg(""); $("#file-info").innerHTML = `<span class="file-chip">${esc(f.name)} · ${(f.size / 1048576).toFixed(1)} Mo</span>`; refreshBtn(); }
 
 /* ===================== Exports ===================== */
 function scopeApps(){ const all = S.dossier.appareils.map((a, i) => ({a, i})); return $("#x-scope").value === "app" ? [all[S.appIdx]] : all; }
