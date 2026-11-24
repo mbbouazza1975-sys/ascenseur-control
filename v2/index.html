@@ -21805,7 +21805,7 @@ function renderRefBadges(){
   $("#props-count").textContent = n ? `(${n})` : "";
   $("#ref-ver").textContent = (S.lang === "nl" ? "Ref. " : "Réf. ") + (S.base.version ? `v${S.base.version}${S.base.brouillon ? "*" : ""}` : "—");
   const L = T[S.lang], banner = $("#ref-banner");
-  if (!S.base.codes.length) { banner.textContent = L.refNone; banner.className = "notice warn"; }
+  if (!S.base.codes.length) { banner.innerHTML = esc(L.refNone) + ` <button id="banner-import" class="btn primary" type="button">${esc(L.rImport)}</button>`; banner.className = "notice warn"; }
   else if (isRef() && S.base.brouillon) { banner.textContent = L.refDraft; banner.className = "notice warn"; }
   else banner.className = "notice hidden";
   $("#codes-info").textContent = S.E.codes.size ? L.codesInfo(S.E.codes.size, "v" + S.base.version) : L.noCodes;
@@ -22043,6 +22043,7 @@ async function compareExcel(f){
 
 function bindRef(){
   $("#r-import").addEventListener("click", () => $("#r-file").click());
+  $("#ref-banner").addEventListener("click", e => { if (e.target.id === "banner-import") $("#r-file").click(); });
   $("#r-file").addEventListener("change", async e => { const f = e.target.files[0]; e.target.value = ""; if (f) await importRefFile(f); });
   $("#r-actions").addEventListener("click", e => { if (e.target.id === "r-send") exportProps(); if (e.target.id === "r-publish") publish(); if (e.target.id === "r-discard") discardDraft(); });
   $$("[data-sub]").forEach(b => b.addEventListener("click", () => { S.sub = b.dataset.sub; $$("[data-sub]").forEach(x => x.setAttribute("aria-pressed", x === b)); $$(".sub").forEach(s => s.classList.toggle("hidden", s.id !== "sub-" + S.sub)); }));
