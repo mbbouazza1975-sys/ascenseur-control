@@ -197,6 +197,7 @@ dialog h3{margin:0;font:700 17px var(--font-display)}
 .intitule{display:block;font-size:12px;color:var(--muted);margin-top:3px}
 .ver{font:600 12px var(--font-mono);padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
 @media print{.nav,.actions,footer,.toolbar .chips{display:none}}
+#msg{white-space:pre-line}
 
 </style>
 </head>
@@ -496,6 +497,23 @@ dialog h3{margin:0;font:700 17px var(--font-display)}
 </form></dialog>
 
 <div id="toast" class="toast hidden" role="status"></div>
+<script>/* Garde-fou (syntaxe ES5 volontaire) : aucune erreur ne doit rester invisible pour l'utilisateur. */
+(function(){
+  var shown = {};
+  function show(msg){
+    if (shown[msg]) return; shown[msg] = 1;
+    var box = document.getElementById("fatal");
+    if (!box) { box = document.createElement("div"); box.id = "fatal";
+      box.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:#B3261E;color:#fff;padding:12px 16px;border-radius:8px;font:14px/1.45 system-ui,Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.3);white-space:pre-wrap";
+      document.body.appendChild(box); }
+    box.textContent = "Problème technique — faites une capture de ce message et envoyez-la.\n" + msg + "\nNavigateur : " + navigator.userAgent + "\nVersion de l'application : " + (window.AC_VERSION || "?");
+  }
+  window.acShowError = show;
+  window.addEventListener("error", function(e){ show((e.message || "Erreur") + (e.filename ? " (" + String(e.filename).split("/").pop() + ":" + e.lineno + ")" : "")); });
+  window.addEventListener("unhandledrejection", function(e){ var r = e.reason; show("Erreur : " + (r && (r.stack || r.message) || r)); });
+  window.addEventListener("load", function(){ setTimeout(function(){ if (!window.__AC_READY) show("L'application n'a pas pu démarrer dans ce navigateur. Utilisez Chrome ou Edge à jour."); }, 6000); });
+})();
+</script>
 <script>
 /**
  * @licstart The following is the entire license notice for the
@@ -20808,7 +20826,7 @@ fr:{
  step1:"Rapport de l'appareil sélectionné", dropTitle:"Déposer le rapport PDF ici", dropHint:"Analyse de risques ou rapport de visite en PDF texte (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"ou coller le texte du rapport", pastePh:"Collez ici le texte (copié depuis le PDF, Word ou un mail). Une remarque par ligne ou par paragraphe.",
  fDrive:"Type d'entraînement", dAuto:"Détecter dans le rapport", dTraction:"Traction à câbles", dHydroD:"Hydraulique direct", dHydroI:"Hydraulique indirect",
- fOutLang:"Langue du tableau", analyze:"Analyser le rapport", reanalyzeWarn:"", analyzing:"Analyse en cours…", undoAnalyse:"Restaurer le tableau précédent", undone:"Tableau précédent restauré.",
+ fOutLang:"Langue du tableau", analyze:"Analyser le rapport", reanalyzeWarn:"", analyzing:"Analyse en cours…", analyzeErr:"L'analyse a échoué :", pastedText:"texte collé", notPdf:n=>`« ${n} » n'est pas un PDF. Enregistrez le rapport en PDF (ou collez son texte).`, fileReady:n=>`Fichier prêt : ${n}. Cliquez sur « Analyser le rapport ».`, diag:(f,p,c,l,m)=>`Lecture : ${f} — ${p} page(s), ${c} caractères, ${l} lignes, découpage « ${m||"—"} ».`, undoAnalyse:"Restaurer le tableau précédent", undone:"Tableau précédent restauré.",
  summary:"Synthèse de l'appareil", exampleFlag:"EXEMPLE FICTIF — déposez un rapport pour l'analyser",
  fAll:"Toutes", fRem:"À remédier", fAlert:"À vérifier", fInfo:"Info / à surveiller",
  xScopeD:"Export : tout le dossier", xScopeA:"Export : cet appareil",
@@ -20905,7 +20923,7 @@ nl:{
  step1:"Verslag van het geselecteerde toestel", dropTitle:"PDF-verslag hier neerzetten", dropHint:"Risicoanalyse of keuringsverslag als tekst-PDF (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"of de tekst van het verslag plakken", pastePh:"Plak hier de tekst (gekopieerd uit de PDF, Word of een mail). Eén opmerking per regel of per alinea.",
  fDrive:"Aandrijving", dAuto:"Uit het verslag halen", dTraction:"Tractie (kabels)", dHydroD:"Hydraulisch direct", dHydroI:"Hydraulisch indirect",
- fOutLang:"Taal van de tabel", analyze:"Verslag analyseren", reanalyzeWarn:"", analyzing:"Bezig met analyseren…", undoAnalyse:"Vorige tabel terugzetten", undone:"Vorige tabel teruggezet.",
+ fOutLang:"Taal van de tabel", analyze:"Verslag analyseren", reanalyzeWarn:"", analyzing:"Bezig met analyseren…", analyzeErr:"De analyse is mislukt:", pastedText:"geplakte tekst", notPdf:n=>`« ${n} » is geen PDF. Sla het verslag op als PDF (of plak de tekst).`, fileReady:n=>`Bestand klaar: ${n}. Klik op « Verslag analyseren ».`, diag:(f,p,c,l,m)=>`Gelezen: ${f} — ${p} pagina('s), ${c} tekens, ${l} regels, opdeling « ${m||"—"} ».`, undoAnalyse:"Vorige tabel terugzetten", undone:"Vorige tabel teruggezet.",
  summary:"Overzicht van het toestel", exampleFlag:"FICTIEF VOORBEELD — zet een verslag neer om het te analyseren",
  fAll:"Alle", fRem:"Te verhelpen", fAlert:"Na te kijken", fInfo:"Info / op te volgen",
  xScopeD:"Export: heel het dossier", xScopeA:"Export: dit toestel",
@@ -20990,7 +21008,7 @@ nl:{
 
 "use strict";
 /* ===================== Outils généraux ===================== */
-const APP_VERSION = "2.0 — 23/11/2026";
+const APP_VERSION = "2.0.3 — 25/11/2026"; window.AC_VERSION = APP_VERSION;
 const REF_TYPE = "referentiel-ascenseur-control", PROPS_TYPE = "propositions-ascenseur-control", DOSSIER_TYPE = "dossier-ascenseur-control";
 /* L'intitulé d'offre GOA (avec prix) n'est PAS dans le code source : il vient du référentiel interne (règle 2i/104). */
 const GOA_INTITULE = typeof INITIAL_GOA_INTITULE !== "undefined" ? INITIAL_GOA_INTITULE : "";
@@ -21429,7 +21447,7 @@ function analyseLines(lines, lang){
       mesure:measureOf(b.body, lang), include: stx.st === "remedier" && stx.sure});
   });
   const rc = method === "sections" ? recountSections(lines, rows) : recount(lines, rows);
-  return {meta, rows, check:{count: rc.count, missing: rc.missing, annonce: meta.annonce || ""}, textLen: full.replace(/\s/g,"").length};
+  return {meta, rows, check:{count: rc.count, missing: rc.missing, annonce: meta.annonce || ""}, textLen: full.replace(/\s/g,"").length, pages: new Set(lines.map(l => l.p).filter(Boolean)).size, method};
 }
 function mkRow(o){
   o = o && typeof o === "object" ? o : {};
@@ -21594,6 +21612,10 @@ const refreshBtn = () => { $("#analyze").disabled = !S.file && !$("#paste").valu
 
 /* ---------- Analyse ---------- */
 async function analyze(){
+  try { await analyzeInner(); }
+  catch (e) { const b = $("#analyze"); b.disabled = false; b.innerHTML = `<span>${esc(T[S.lang].analyze)}</span>`; showMsg(T[S.lang].analyzeErr + " " + (e && e.message || e), "crit"); if (window.acShowError) window.acShowError("Analyse : " + (e && (e.stack || e.message) || e)); }
+}
+async function analyzeInner(){
   const lang = $("#outlang").value;
   if (S.dossier.exemple) { S.dossier = newDossier(); S.appIdx = 0; fillDossierForm(); fillAppForm(); $("#outlang").value = lang; curApp().outLang = lang; } // ne jamais analyser dans l'exemple fictif
   const L = T[S.lang], a = curApp();
@@ -21608,8 +21630,9 @@ async function analyze(){
     res = analyseLines(lines, lang);
   } catch (e) { btn.innerHTML = label; refreshBtn(); showMsg(L.pdfErr + " (" + (e && e.message || e) + ")", "crit"); return; }
   btn.innerHTML = label; refreshBtn();
-  if (res.textLen < 40) { showMsg(S.file ? L.scanned : L.nothing, "warn"); return; }
-  if (!res.rows.length) { showMsg(L.nothing, "warn"); return; }
+  const diag = L.diag(S.file ? S.file.name : L.pastedText, res.pages, res.textLen, lines.length, res.method);
+  if (res.textLen < 40) { showMsg((S.file ? L.scanned : L.nothing) + "\n" + diag, "warn"); return; }
+  if (!res.rows.length) { showMsg(L.nothing + "\n" + diag, "warn"); return; }
   leaveExample();
   // l'ancien tableau est gardé pour pouvoir le restaurer (plus de double clic)
   const previous = a.rows.length ? {meta:a.meta, rows:a.rows, check:a.check, fichier:a.fichier, analyseLe:a.analyseLe, outLang:a.outLang} : null;
@@ -21618,7 +21641,7 @@ async function analyze(){
   if (!a.numero && res.meta.appareil) a.numero = res.meta.appareil;
   if (!S.dossier.nom && !a.nom && res.meta.appareil) a.nom = "";
   renderDossier(); persist();
-  showMsg(L.done(res.rows.length) + (S.file ? " — " + S.file.name : ""), "info");
+  showMsg(L.done(res.rows.length) + "\n" + diag, "info");
   if (previous) $("#msg").insertAdjacentHTML("beforeend", ` <button id="undo-analyse" class="btn ghost" type="button">${esc(L.undoAnalyse)}</button>`);
   $("#tiles").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
 }
@@ -21683,6 +21706,9 @@ function bindDossier(){
   ["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
   ["dragleave","drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
   drop.addEventListener("drop", e => takeFile(e.dataTransfer.files[0]));
+  // Fichier lâché n'importe où dans la page : on le prend (sinon le navigateur ouvre le PDF et quitte l'application)
+  window.addEventListener("dragover", e => e.preventDefault());
+  window.addEventListener("drop", e => { e.preventDefault(); if (e.target.closest && e.target.closest("#drop")) return; const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) { if (S.view !== "dossier") showView("dossier"); takeFile(f); } });
 
   // dossier
   $("#d-new").addEventListener("click", () => openDossier(newDossier()));
@@ -21693,7 +21719,7 @@ function bindDossier(){
   $("#x-xlsx").addEventListener("click", exportXlsx);
   $("#x-copy").addEventListener("click", exportCopy);
 }
-function takeFile(f){ if (!f) return; S.file = f; showMsg(""); $("#file-info").innerHTML = `<span class="file-chip">${esc(f.name)} · ${(f.size / 1048576).toFixed(1)} Mo</span>`; refreshBtn(); }
+function takeFile(f){ if (!f) return; if (!/\.pdf$/i.test(f.name) && f.type !== "application/pdf") { showMsg(T[S.lang].notPdf(f.name), "warn"); return; } S.file = f; showMsg(T[S.lang].fileReady(f.name), "info"); $("#file-info").innerHTML = `<span class="file-chip">${esc(f.name)} · ${(f.size / 1048576).toFixed(1)} Mo</span>`; refreshBtn(); }
 
 /* ===================== Exports ===================== */
 function scopeApps(){ const all = S.dossier.appareils.map((a, i) => ({a, i})); return $("#x-scope").value === "app" ? [all[S.appIdx]] : all; }
