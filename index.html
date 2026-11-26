@@ -313,6 +313,17 @@ tbody tr.grp th{text-align:left;background:var(--bg);padding:8px 10px;font-size:
 
 .cl-group input{text-overflow:ellipsis}
 
+/* Bandeau de priorité : visible dès l'analyse, reste en haut */
+.prio-banner{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 18px;border-radius:var(--radius);background:var(--cs);border:2px var(--bs) var(--cl);border-left-width:12px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.pb-letter{display:grid;place-items:center;width:56px;height:56px;border-radius:10px;background:var(--cl);color:#fff;font:800 32px var(--font-display)}
+.prio-banner.sect-none .pb-letter{background:var(--surface);color:var(--muted);border:2px dotted var(--muted)}
+.pb-main{display:grid;gap:2px;min-width:0}
+.pb-main strong{font:800 20px/1.2 var(--font-display);color:var(--c)}
+.pb-main span{font-size:13.5px;color:var(--ink)}
+.pb-counts{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-weight:700;font-size:14px;justify-content:flex-end}
+@media (max-width:700px){.prio-banner{grid-template-columns:auto 1fr}.pb-counts{grid-column:1/-1;justify-content:flex-start}}
+@media print{.prio-banner{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
 </style>
 </head>
 <body>
@@ -348,6 +359,14 @@ tbody tr.grp th{text-align:left;background:var(--bg);padding:8px 10px;font-size:
 
 <!-- ========== DOSSIER ========== -->
 <main id="v-dossier" class="view">
+  <section id="prio-banner" class="prio-banner sect-none hidden" role="status" aria-live="polite">
+    <span id="pb-letter" class="pb-letter">?</span>
+    <div class="pb-main">
+      <strong id="pb-word"></strong>
+      <span id="pb-sub"></span>
+    </div>
+    <div id="pb-counts" class="pb-counts"></div>
+  </section>
 <section id="cl-card" class="panel cl-card sect-none" aria-labelledby="cl-titre">
   <div class="cl-head">
     <div>
@@ -422,6 +441,7 @@ tbody tr.grp th{text-align:left;background:var(--bg);padding:8px 10px;font-size:
       </div>
       <div class="fields">
         <div class="field"><label for="a-nom" data-i18n="aNom"></label><input id="a-nom" type="text" autocomplete="off" data-i18n-ph="aNomPh"></div>
+        <div class="field"><label for="a-orona" data-i18n="aOrona"></label><input id="a-orona" type="text" autocomplete="off" data-i18n-ph="aOronaPh"></div>
         <div class="field"><label for="a-num" data-i18n="aNum"></label><input id="a-num" type="text" autocomplete="off"></div>
         <div class="field">
           <label for="drive" data-i18n="fDrive"></label>
@@ -449,6 +469,7 @@ tbody tr.grp th{text-align:left;background:var(--bg);padding:8px 10px;font-size:
     <h2 id="fa-h" data-i18n="faTitle"></h2>
     <dl class="kv">
       <div><dt data-i18n="faNom"></dt><dd id="fa-nom"></dd></div>
+      <div><dt data-i18n="aOrona"></dt><dd id="fa-orona"></dd></div>
       <div><dt data-i18n="faNum"></dt><dd id="fa-num"></dd></div>
       <div><dt data-i18n="faMarque"></dt><dd id="fa-marque"></dd></div>
       <div><dt data-i18n="faGenre"></dt><dd id="fa-genre"></dd></div>
@@ -21013,9 +21034,9 @@ fr:{
  title:"Application Ascenseur Control", subtitle:"Analyse de risques ou rapport de visite → tableau des remarques, solutions et codes Orona", offline:"Sans internet ni IA",
  navDossier:"Dossier en cours", navDossiers:"Mes dossiers", navRef:"Référentiel des codes", navAide:"Mode d'emploi",
  dossierTitle:"Dossier", dNew:"+ Nouveau dossier", dSaveFile:"Sauvegarder le dossier (fichier)",
- dNom:"Nom du dossier (client / ACP)", dNomPh:"rempli depuis le rapport", dAdresse:"Adresse", dClient:"Syndic / gestionnaire (c/o)", dOffre:"Réf. offre",
+ dNom:"Nom du dossier (à saisir)", dNomPh:"ex. Statuaires 48 – remarques BTV 2026", dAdresse:"Adresse", dClient:"Syndic / gestionnaire (c/o)", dOffre:"Réf. offre",
  appsTitle:"Appareils du dossier", aAdd:"+ Appareil", aDup:"Dupliquer l'appareil", aDel:"Supprimer l'appareil",
- aNom:"Nom de l'appareil", aNomPh:"ex. Bloc A, Ascenseur 1", aNum:"N° appareil", appDefault:n=>`Appareil ${n}`,
+ aNom:"Nom de l'appareil", aNomPh:"ex. Bloc A, Ascenseur 1", aNum:"N° de fabrication (rapport)", aOrona:"N° d'ascenseur Orona", aOronaPh:"à saisir (pas dans le rapport)", fabShort:"fab.", appDefault:n=>`Appareil ${n}`, toEnter:"à saisir", nameMissing:"nom du dossier à saisir", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} urgent(s)` : "", `${p2} à traiter`, p3 ? `${p3} à surveiller` : ""].filter(Boolean), pbNone:"Aucun point à remédier",
  confirmDelApp:"Supprimer cet appareil et son tableau ? Cliquez à nouveau pour confirmer.", lastApp:"Un dossier garde au moins un appareil.",
  step1:"Rapport de l'appareil sélectionné", dropTitle:"Déposer le rapport PDF ici", dropHint:"Analyse de risques ou rapport de visite en PDF texte (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"ou coller le texte du rapport", pastePh:"Collez ici le texte (copié depuis le PDF, Word ou un mail). Une remarque par ligne ou par paragraphe.",
@@ -21042,7 +21063,7 @@ fr:{
  clContact:"Personne de contact", clSyndicAdr:"Adresse du syndic", clTel:"Téléphone", clEmail:"E-mail",
  clRefRapport:"Réf. rapport SECT", clRefClient:"Réf. client / dossier syndic", clComplete:(n,t)=>`Fiche complète : ${n}/${t}`,
  notFound:"Non trouvé dans le rapport", srcReport:p=>p?`rapport p. ${p}`:"rapport", srcManual:"saisi",
- faTitle:"Fiche appareil", faNom:"Appareil", faNum:"N° appareil / fabrication", faMarque:"Marque et type", faGenre:"Genre",
+ faTitle:"Fiche appareil", faNom:"Appareil", faNum:"N° de fabrication", faMarque:"Marque et type", faGenre:"Genre",
  faAnnee:"Année de construction", faCharge:"Charge / personnes", faVitesse:"Vitesse", faArrets:"Niveaux desservis", faDrive:"Entraînement", faEntretien:"Entretenu par",
  srTitle:"Situation réglementaire", srType:"Type de rapport", srFile:"Fichier analysé", srEdit:"Corriger la conclusion",
  sectConcl:"Conclusion",
@@ -21123,9 +21144,9 @@ nl:{
  title:"Application Ascenseur Control", subtitle:"Risicoanalyse of keuringsverslag → tabel met opmerkingen, oplossingen en Orona-codes", offline:"Zonder internet en zonder AI",
  navDossier:"Huidig dossier", navDossiers:"Mijn dossiers", navRef:"Codereferentie", navAide:"Handleiding",
  dossierTitle:"Dossier", dNew:"+ Nieuw dossier", dSaveFile:"Dossier opslaan (bestand)",
- dNom:"Dossiernaam (klant / VME)", dNomPh:"ingevuld uit het verslag", dAdresse:"Adres", dClient:"Syndicus / beheerder (c/o)", dOffre:"Ref. offerte",
+ dNom:"Dossiernaam (in te vullen)", dNomPh:"bv. Statuaires 48 – opmerkingen BTV 2026", dAdresse:"Adres", dClient:"Syndicus / beheerder (c/o)", dOffre:"Ref. offerte",
  appsTitle:"Toestellen in het dossier", aAdd:"+ Toestel", aDup:"Toestel dupliceren", aDel:"Toestel verwijderen",
- aNom:"Naam van het toestel", aNomPh:"bv. Blok A, Lift 1", aNum:"Toestelnr.", appDefault:n=>`Toestel ${n}`,
+ aNom:"Naam van het toestel", aNomPh:"bv. Blok A, Lift 1", aNum:"Fabricagenummer (verslag)", aOrona:"Orona-liftnummer", aOronaPh:"in te vullen (niet in het verslag)", fabShort:"fabr.", appDefault:n=>`Toestel ${n}`, toEnter:"in te vullen", nameMissing:"dossiernaam in te vullen", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} dringend` : "", `${p2} te behandelen`, p3 ? `${p3} op te volgen` : ""].filter(Boolean), pbNone:"Geen te verhelpen punten",
  confirmDelApp:"Dit toestel en zijn tabel verwijderen? Klik nogmaals om te bevestigen.", lastApp:"Een dossier houdt minstens één toestel.",
  step1:"Verslag van het geselecteerde toestel", dropTitle:"PDF-verslag hier neerzetten", dropHint:"Risicoanalyse of keuringsverslag als tekst-PDF (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"of de tekst van het verslag plakken", pastePh:"Plak hier de tekst (gekopieerd uit de PDF, Word of een mail). Eén opmerking per regel of per alinea.",
@@ -21152,7 +21173,7 @@ nl:{
  clContact:"Contactpersoon", clSyndicAdr:"Adres syndicus", clTel:"Telefoon", clEmail:"E-mail",
  clRefRapport:"Ref. keuringsverslag", clRefClient:"Ref. klant / dossier syndicus", clComplete:(n,t)=>`Fiche volledig: ${n}/${t}`,
  notFound:"Niet gevonden in het verslag", srcReport:p=>p?`verslag p. ${p}`:"verslag", srcManual:"ingevuld",
- faTitle:"Toestelfiche", faNom:"Toestel", faNum:"Toestelnr. / fabricagenr.", faMarque:"Merk en type", faGenre:"Soort",
+ faTitle:"Toestelfiche", faNom:"Toestel", faNum:"Fabricagenummer", faMarque:"Merk en type", faGenre:"Soort",
  faAnnee:"Bouwjaar", faCharge:"Last / personen", faVitesse:"Snelheid", faArrets:"Stopplaatsen", faDrive:"Aandrijving", faEntretien:"Onderhouden door",
  srTitle:"Reglementaire toestand", srType:"Soort verslag", srFile:"Geanalyseerd bestand", srEdit:"Conclusie corrigeren",
  sectConcl:"Conclusie",
@@ -21228,7 +21249,7 @@ nl:{
 
 "use strict";
 /* ===================== Outils généraux ===================== */
-const APP_VERSION = "2.1 — 26/11/2026"; window.AC_VERSION = APP_VERSION;
+const APP_VERSION = "2.2 — 26/11/2026"; window.AC_VERSION = APP_VERSION;
 const REF_TYPE = "referentiel-ascenseur-control", PROPS_TYPE = "propositions-ascenseur-control", DOSSIER_TYPE = "dossier-ascenseur-control";
 /* L'intitulé d'offre GOA (avec prix) n'est PAS dans le code source : il vient du référentiel interne (règle 2i/104). */
 const GOA_INTITULE = typeof INITIAL_GOA_INTITULE !== "undefined" ? INITIAL_GOA_INTITULE : "";
@@ -21815,7 +21836,7 @@ function checksFor(r, app){
 /* ===================== Dossiers multi-appareils ===================== */
 function newApp(){ return {id:uid(), nom:"", numero:"", entrainement:"auto", outLang:S.lang, meta:{}, check:null, rows:[], fichier:"", analyseLe:""}; }
 function newDossier(){ return {type:DOSSIER_TYPE, schema:3, id:uid(), nom:"", client:{acp:"", immRue:"", immCp:"", syndic:"", contact:"", syndicAdr:"", tel:"", email:"", refRapport:"", refClient:""}, clientSrc:{}, refOffre:"", creeLe:nowIso(), modifieLe:nowIso(), auteur:S.user.nom||"", exemple:false, appareils:[newApp()]}; }
-const appName = (a, i) => [a.nom, a.numero].filter(Boolean).join(" – ") || T[S.lang].appDefault(i + 1);
+const appName = (a, i) => [a.orona && "Orona " + a.orona, a.nom, a.numero && T[S.lang].fabShort + " " + a.numero].filter(Boolean).join(" – ") || T[S.lang].appDefault(i + 1);
 
 function driveLabel(a, lang){
   const fi = (a.meta && a.meta.fiche) || {};
@@ -21861,7 +21882,7 @@ function clientFromReport(d, fi, meta){
   if (d.client.acp && fi.acp && norm(d.client.acp) !== norm(fi.acp)) return fi.acp;
   const map = {acp:fi.acp, immRue:fi.lieu, immCp:fi.lieuCp, syndic:fi.syndic, contact:fi.contact, syndicAdr:[fi.syndicRue, fi.syndicCp].filter(Boolean).join(", "), tel:fi.tel, email:fi.email, refRapport:fi.refRapport, refClient:fi.refClient};
   for (const [k, v] of Object.entries(map)) if (v && (!d.client[k] || d.clientSrc[k] === "rapport")) { d.client[k] = v; d.clientSrc[k] = fi.telDouteux && k === "tel" ? "douteux" : "rapport"; }
-  if (!d.nom || d.nomAuto) { const nm = fi.acp || fi.lieu || ""; if (nm) { d.nom = nm; d.nomAuto = true; } }
+  // le nom du dossier n'est jamais déduit du rapport : l'utilisateur le saisit
 }
 function fillDossierForm(){
   const d = ensureClient(S.dossier);
@@ -21871,7 +21892,8 @@ function fillDossierForm(){
 }
 function renderClient(){
   const L = T[S.lang], d = ensureClient(S.dossier), c = d.client;
-  $("#cl-titre").textContent = d.nom || c.acp || L.untitled;
+  $("#cl-titre").textContent = d.nom || [c.acp, `(${L.nameMissing})`].filter(Boolean).join(" ") || L.untitled;
+  $("#d-nom").closest(".field").classList.toggle("is-missing", !d.nom);
   $("#cl-soustitre").textContent = [c.immRue, c.immCp].filter(Boolean).join(", ");
   let n = 0;
   CL_FIELDS.forEach(([id, k]) => {
@@ -21904,7 +21926,7 @@ function prioOf(r, a){
 function sortedRows(a, rows){ return $("#t-order") && $("#t-order").checked ? rows : [...rows].sort((x, y) => prioOf(x, a) - prioOf(y, a) || a.rows.indexOf(x) - a.rows.indexOf(y)); }
 function fillAppForm(){
   const a = curApp();
-  $("#a-nom").value = a.nom || ""; $("#a-num").value = a.numero || ""; $("#drive").value = a.entrainement || "auto"; $("#outlang").value = a.outLang || S.lang;
+  $("#a-nom").value = a.nom || ""; $("#a-num").value = a.numero || ""; $("#a-orona").value = a.orona || ""; $("#a-orona").closest(".field").classList.toggle("is-missing", !a.orona); $("#drive").value = a.entrainement || "auto"; $("#outlang").value = a.outLang || S.lang;
 }
 
 /* ---------- Rendu ---------- */
@@ -21919,9 +21941,19 @@ function renderMeta(){ renderFicheApp(); renderSituation(); }
 function setDD(id, v, extraHtml){ const el = $("#" + id), L = T[S.lang]; if (v) { el.classList.remove("is-missing"); el.innerHTML = esc(v) + (extraHtml || ""); } else { el.classList.add("is-missing"); el.textContent = L.notFound; } }
 function renderFicheApp(){
   const a = curApp(), m = a.meta || {}, fi = m.fiche || {};
-  setDD("fa-nom", a.nom || fi.nomApp || fi.batiment); setDD("fa-num", a.numero || fi.fab || m.appareil); setDD("fa-marque", [fi.marque, fi.type].filter(Boolean).join(" "));
+  setDD("fa-nom", a.nom || fi.nomApp || fi.batiment); setDD("fa-num", a.numero || fi.fab || m.appareil); setDD("fa-orona", a.orona || ""); setDD("fa-marque", [fi.marque, fi.type].filter(Boolean).join(" "));
   setDD("fa-genre", fi.genre); setDD("fa-annee", fi.annee); setDD("fa-charge", [fi.charge, fi.personnes].filter(Boolean).join(" · ")); setDD("fa-vitesse", fi.vitesse);
   setDD("fa-arrets", fi.arrets); setDD("fa-drive", driveLabel(a, S.lang)); setDD("fa-entretien", m.entretien || fi.entretien); setDD("fa-ce", fi.ce);
+}
+function renderBanner(){
+  const L = T[S.lang], a = curApp(), b = $("#prio-banner");
+  if (!a || (!a.analyseLe && !a.rows.length) || S.dossier.exemple) { b.classList.add("hidden"); return; }
+  const s = sectOf(a), m = a.meta || {}, c = [1, 2, 3].map(p => a.rows.filter(r => prioOf(r, a) === p).length);
+  b.className = "prio-banner sect-" + s.grp;
+  $("#pb-letter").textContent = s.letter;
+  $("#pb-word").textContent = `${L.sectConcl} ${s.letter} — ${L.sect[s.grp]}`;
+  $("#pb-sub").textContent = [appName(a, S.appIdx), m.organisme, m.date_rapport, m.echeanceDepassee ? `${L.mEcheance} ${m.echeance} : ${L.mDepassee}` : ""].filter(Boolean).join(" · ");
+  $("#pb-counts").innerHTML = (c[0] + c[1] + c[2] ? [c[0] && `<span class="prio prio-1">P1</span>`, `<span class="prio prio-2">P2</span>`, c[2] && `<span class="prio prio-3">P3</span>`].filter(Boolean).map((x, k) => x + esc(L.pbCounts(c[0], c[1], c[2])[k] || "")).join(" ") : esc(L.pbNone));
 }
 function renderSituation(){
   const L = T[S.lang], a = curApp(), m = a.meta || {}, s = sectOf(a), fi = m.fiche || {};
@@ -22002,7 +22034,7 @@ function renderRecap(){
 function renderDossier(){
   if (!S.dossier) return;
   $("#example-flag").classList.toggle("hidden", !S.dossier.exemple);
-  renderClient(); renderApps(); fillAppForm(); renderMeta(); renderTiles(); renderTable(); renderNotCovered(); renderRecap(); refreshBtn();
+  renderClient(); renderApps(); fillAppForm(); renderMeta(); renderBanner(); renderTiles(); renderTable(); renderNotCovered(); renderRecap(); refreshBtn();
 }
 const rowById = id => curApp().rows.find(r => r.id === id);
 const refreshBtn = () => { $("#analyze").disabled = !S.file && !$("#paste").value.trim(); };
@@ -22043,7 +22075,7 @@ async function analyzeInner(){
   // Remplissage automatique depuis le rapport (sans écraser ce que l'utilisateur a saisi)
   const fi = res.meta.fiche || {}, D = S.dossier;
   const otherClient = clientFromReport(D, fi, res.meta);
-  if (!a.numero && res.meta.appareil) a.numero = res.meta.appareil;
+  if (res.meta.appareil) a.numero = res.meta.appareil; // n° de fabrication : toujours celui du rapport
   if (!a.nom && (fi.nomApp || fi.batiment)) a.nom = titleCase(fi.nomApp || fi.batiment).slice(0, 60);
   if (fi.drive && fi.drive !== "hydro" && !a.driveManuel) a.entrainement = fi.drive;
   else if (!a.driveManuel) a.entrainement = "auto";
@@ -22052,7 +22084,7 @@ async function analyzeInner(){
   renderDossier(); persist();
   showMsg((res.rows.some(r => r.statut === "remedier") || !res.meta.sansRemarque ? L.done(res.rows.length) : L.noRemark(res.meta.conclusion)) + "\n" + diag + (otherClient ? "\n" + L.otherClient(otherClient, D.client.acp) : ""), otherClient ? "warn" : "info");
   if (previous) $("#msg").insertAdjacentHTML("beforeend", ` <button id="undo-analyse" class="btn ghost" type="button">${esc(L.undoAnalyse)}</button>`);
-  $("#tiles").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+  window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"}); // le bandeau de priorité est en haut
 }
 function undoAnalyse(){
   const a = curApp(); if (!S.undo || S.undo.appId !== a.id) return;
@@ -22097,12 +22129,12 @@ function bindDossier(){
   $("#learn-all").addEventListener("click", async () => { let n = 0; for (const r of curApp().rows) { const c = S.E.codes.get(r.code); if (r.code && r.texte && (r.edited || r.confiance === "certain") && (!S.E.codes.size || (c && c.actif))) { if (await learn(r)) n++; } } leaveExample(); persist(); renderDossier(); renderRefBadges(); toast(L().learnedAll(n)); });
 
   // champs dossier / appareil
-  [["#d-nom","nom"],["#d-offre","refOffre"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { S.dossier[f] = e.target.value; if (f === "nom") S.dossier.nomAuto = false; leaveExample(); persist(); $("#cl-titre").textContent = S.dossier.nom || T[S.lang].untitled; }));
+  [["#d-nom","nom"],["#d-offre","refOffre"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { S.dossier[f] = e.target.value; if (f === "nom") S.dossier.nomAuto = false; leaveExample(); persist(); renderClient(); }));
   CL_FIELDS.forEach(([id, k]) => $("#" + id).addEventListener("input", e => { const d = ensureClient(S.dossier); d.client[k] = e.target.value; d.clientSrc[k] = e.target.value ? "saisie" : "vide"; leaveExample(); persist(); }));
   CL_FIELDS.forEach(([id]) => $("#" + id).addEventListener("change", () => renderClient()));
   $("#sr-letter-edit").addEventListener("change", e => { const a = curApp(); a.meta = a.meta || {}; a.meta.conclusion = e.target.value; a.meta.conclusionManuelle = true; leaveExample(); persist(); renderDossier(); });
   $("#t-order").addEventListener("change", renderTable);
-  [["#a-nom","nom"],["#a-num","numero"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { curApp()[f] = e.target.value; leaveExample(); persist(); renderApps(); }));
+  [["#a-nom","nom"],["#a-num","numero"],["#a-orona","orona"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { curApp()[f] = e.target.value; leaveExample(); persist(); renderApps(); }));
   $("#drive").addEventListener("change", e => { curApp().entrainement = e.target.value; curApp().driveManuel = e.target.value !== "auto"; persist(); renderDossier(); });
   $("#outlang").addEventListener("change", e => { curApp().outLang = e.target.value; persist(); renderTable(); renderRecap(); });
   $("#apps").addEventListener("click", e => { const b = e.target.closest("[data-app]"); if (!b) return; S.appIdx = +b.dataset.app; S.file = null; $("#file-info").innerHTML = ""; $("#paste").value = ""; showMsg(""); renderDossier(); });
@@ -22147,7 +22179,7 @@ function infoLines(lang){
 }
 function appInfo(a, lang){
   const L = T[lang], m = a.meta || {}, o = [];
-  if (a.numero) o.push(`${L.aNum} ${a.numero}`);
+  if (a.orona) o.push(`${L.aOrona} ${a.orona}`); if (a.numero) o.push(`${L.faNum} ${a.numero}`);
   const dr = driveLabel(a, lang); if (dr) o.push(dr);
   const fi = m.fiche || {}; if (fi.marque || fi.type) o.push([fi.marque, fi.type].filter(Boolean).join(" ")); if (fi.annee) o.push((lang === "nl" ? "bouwjaar " : "année ") + fi.annee);
   if (m.organisme) o.push(m.organisme); if (m.date_rapport) o.push(`${L.mDate} ${m.date_rapport}`); if (m.conclusion) o.push(`${L.mConcl} ${m.conclusion}`); if (m.prochain) o.push(`${L.mNext} ${m.prochain}`); if (m.entretien) o.push(`${L.mEntretien} ${m.entretien}`); if (m.incomplet) o.push(m.incomplet); if (m.analyse) o.push(`${L.mAR} ${m.analyse}`);
@@ -22571,7 +22603,7 @@ async function renderDossiers(){
   const L = T[S.lang], q = norm($("#ds-search").value);
   const all = (await DB.dossiers()).sort((a, b) => String(b.modifieLe).localeCompare(String(a.modifieLe)));
   all.forEach(ensureClient);
-  const list = all.filter(d => !q || norm([d.nom, d.refOffre, ...Object.values(d.client), ...d.appareils.map(a => a.nom + " " + a.numero)].join(" ")).includes(q));
+  const list = all.filter(d => !q || norm([d.nom, d.refOffre, ...Object.values(d.client), ...d.appareils.map(a => a.nom + " " + a.numero + " " + (a.orona || ""))].join(" ")).includes(q));
   $("#ds-list").innerHTML = list.length ? list.map(d => { const rem = d.appareils.reduce((n, a) => n + a.rows.filter(r => r.statut === "remedier").length, 0);
     const ws = dossierSect(d), sub = [[d.client.immRue, d.client.immCp].filter(Boolean).join(", "), d.client.syndic].filter(Boolean).join(" · ");
     return `<div class="card sect-${ws.grp}"><div><h3><span class="sect-badge sect-${ws.grp}"><b>${esc(ws.letter)}</b><span>${esc(L.sect[ws.grp])}</span></span> ${esc(d.nom || L.untitled)}</h3><small>${esc(sub)}${sub ? " · " : ""}${esc(L.dsApps(d.appareils.length))} · ${esc(L.dsRem(rem))} · ${esc(L.dsModified(fmtDate(d.modifieLe)))}</small></div>
@@ -22585,7 +22617,7 @@ function sanitizeDossier(d){
   if (typeof d.id !== "string" || !/^[a-z0-9]{6,40}$/i.test(d.id)) d.id = uid();
   ["nom","refOffre","auteur"].forEach(k => d[k] = String(d[k] ?? ""));
   d.appareils = d.appareils.filter(a => a && typeof a === "object"); if (!d.appareils.length) d.appareils = [newApp()];
-  d.appareils.forEach(a => { ["nom","numero","fichier"].forEach(k => a[k] = String(a[k] ?? "")); if (!["auto","traction","hydro-direct","hydro-indirect"].includes(a.entrainement)) a.entrainement = "auto"; a.id = uid(); a.rows = (Array.isArray(a.rows) ? a.rows : []).map(r => mkRow(r)); const flat = o => Object.fromEntries(Object.entries(o).filter(([, v]) => v === null || typeof v !== "object").map(([k, v]) => [k, String(v ?? "")])); a.meta = a.meta && typeof a.meta === "object" ? {...flat(a.meta), ...(a.meta.fiche && typeof a.meta.fiche === "object" ? {fiche: flat(a.meta.fiche)} : {})} : {}; a.check = a.check && typeof a.check === "object" ? {count:+a.check.count || 0, missing:Array.isArray(a.check.missing) ? a.check.missing.map(String) : [], annonce:String(a.check.annonce || "")} : null; });
+  d.appareils.forEach(a => { ["nom","numero","orona","fichier"].forEach(k => a[k] = String(a[k] ?? "")); if (!["auto","traction","hydro-direct","hydro-indirect"].includes(a.entrainement)) a.entrainement = "auto"; a.id = uid(); a.rows = (Array.isArray(a.rows) ? a.rows : []).map(r => mkRow(r)); const flat = o => Object.fromEntries(Object.entries(o).filter(([, v]) => v === null || typeof v !== "object").map(([k, v]) => [k, String(v ?? "")])); a.meta = a.meta && typeof a.meta === "object" ? {...flat(a.meta), ...(a.meta.fiche && typeof a.meta.fiche === "object" ? {fiche: flat(a.meta.fiche)} : {})} : {}; a.check = a.check && typeof a.check === "object" ? {count:+a.check.count || 0, missing:Array.isArray(a.check.missing) ? a.check.missing.map(String) : [], annonce:String(a.check.annonce || "")} : null; });
   return d;
 }
 function sanitizeKeepId(d){ const id = d.id; sanitizeDossier(d); if (typeof id === "string" && /^[a-z0-9]{6,40}$/i.test(id)) d.id = id; return d; }
