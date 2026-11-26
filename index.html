@@ -111,9 +111,6 @@ header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-
 table{border-collapse:collapse;width:100%;min-width:1180px;font-size:13.5px}
 thead th{position:sticky;top:0;background:var(--surface);text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);padding:9px 10px;border-bottom:2px solid var(--line);white-space:nowrap}
 tbody td{vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--line)}
-tbody tr.remedier td:first-child{box-shadow:inset 4px 0 0 var(--crit)}
-tbody tr.surveiller td:first-child{box-shadow:inset 4px 0 0 var(--warn)}
-tbody tr.info td:first-child{box-shadow:inset 4px 0 0 var(--line)}
 tbody tr.excluded{opacity:.55}
 td.num{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
 .ref{font:600 13px var(--font-mono);white-space:nowrap}
@@ -199,6 +196,123 @@ dialog h3{margin:0;font:700 17px var(--font-display)}
 @media print{.nav,.actions,footer,.toolbar .chips{display:none}}
 #msg{white-space:pre-line}
 
+/* ===== v2.1 — Couleurs SECT, fiche client, priorités ===== */
+:root{
+  --sect-ok:#2E6B3A;   --sect-ok-soft:#E5F2E7;
+  --sect-b:#B04A06;    --sect-b-line:#E8610A; --sect-b-soft:#FDEBDD;
+  --sect-stop:#B3261E; --sect-stop-soft:#FBE9E7;
+  --sect-nc:#5B6672;   --sect-nc-soft:#ECEEF0;
+  --brand-blue:#1F3864;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --sect-ok:#7FC48D; --sect-ok-soft:#1C3322;
+    --sect-b:#F5A266; --sect-b-line:#F08A3E; --sect-b-soft:#3A2414;
+    --sect-stop:#F2877D; --sect-stop-soft:#3A1E1C;
+    --sect-nc:#AEB8C2; --sect-nc-soft:#252D35;
+  }
+}
+:root[data-theme="dark"]{
+  --sect-ok:#7FC48D; --sect-ok-soft:#1C3322;
+  --sect-b:#F5A266; --sect-b-line:#F08A3E; --sect-b-soft:#3A2414;
+  --sect-stop:#F2877D; --sect-stop-soft:#3A1E1C;
+  --sect-nc:#AEB8C2; --sect-nc-soft:#252D35;
+}
+/* Jeton de groupe : chaque .sect-* expose --c (texte/ligne), --cl (ligne), --cs (fond doux), --bs (style N&B) */
+.sect-ok  {--c:var(--sect-ok);  --cl:var(--sect-ok);     --cs:var(--sect-ok-soft);  --bs:solid}
+.sect-b   {--c:var(--sect-b);   --cl:var(--sect-b-line); --cs:var(--sect-b-soft);   --bs:solid}
+.sect-stop{--c:var(--sect-stop);--cl:var(--sect-stop);   --cs:var(--sect-stop-soft);--bs:double}
+.sect-nc  {--c:var(--sect-nc);  --cl:var(--sect-nc);     --cs:var(--sect-nc-soft);  --bs:dashed}
+.sect-none{--c:var(--muted);    --cl:var(--line);        --cs:transparent;          --bs:dotted}
+
+/* Pastille lettre + mot */
+.sect-badge{display:inline-flex;align-items:center;gap:8px;padding:3px 10px 3px 3px;border-radius:999px;background:var(--cs);color:var(--c);font-weight:600;font-size:13px;border:1px var(--bs) var(--cl)}
+.sect-badge b{display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:999px;background:var(--cl);color:#fff;font:700 13px var(--font-display)}
+.sect-none.sect-badge b{background:var(--surface);color:var(--muted);border:1px dotted var(--muted)}
+.kicker{margin:0;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.sec-title{font:600 15px/1.3 var(--font-display);margin:0;letter-spacing:.3px;text-transform:uppercase;color:var(--muted)}
+
+/* Fiche client */
+.cl-card{border-top:6px var(--bs) var(--cl)}
+.cl-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;margin-bottom:14px}
+.cl-titre{font:700 22px/1.2 var(--font-display) !important;color:var(--ink) !important;text-transform:none !important;letter-spacing:0 !important;margin:2px 0 0 !important}
+.cl-sub{margin:2px 0 0;color:var(--muted);font-size:14px}
+.cl-side{display:grid;justify-items:end;gap:6px}
+.cl-complete{font-size:12.5px;color:var(--muted)}
+.cl-complete.gap{color:var(--ink);font-weight:600}
+.cl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.cl-group{border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px 12px;margin:0;display:grid;gap:8px;min-width:0}
+.cl-group legend{padding:0 6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--brand-blue)}
+:root[data-theme="dark"] .cl-group legend{color:var(--accent)}
+.field.two-col{grid-template-columns:1fr 1fr;gap:8px}
+.cl-links{margin:0;font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.cl-links a{color:var(--accent)}
+.field .src{font-size:11.5px;color:var(--muted)}
+.field.is-missing input{border-style:dashed;border-color:var(--sect-b-line);background:var(--sect-b-soft)}
+.field.is-missing input::placeholder{color:var(--sect-b);font-style:italic;opacity:1}
+
+/* Onglets appareils */
+.app-tab{border-left:5px var(--bs) var(--cl)}
+.sect-dot{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:999px;background:var(--cl);color:#fff;font:700 12px var(--font-display);flex:none}
+.app-tab.sect-none .sect-dot{background:transparent;color:inherit;border:1px dotted currentColor}
+.app-tab[aria-selected="true"] .sect-dot{box-shadow:0 0 0 2px var(--surface)}
+
+/* Fiche appareil + situation réglementaire */
+.two-cards{display:grid;grid-template-columns:1fr 1.2fr;gap:16px}
+@media (max-width:960px){.two-cards{grid-template-columns:1fr}}
+.kv{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 18px}
+.kv div{display:grid;gap:1px;min-width:0}
+.kv dt{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.kv dd{margin:0;font-weight:600;font-size:14px;overflow-wrap:anywhere}
+.kv dd.is-missing{font-weight:400;font-style:italic;color:var(--muted)}
+.kv dd .pill{margin-left:6px}
+.sr-banner{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;margin-bottom:14px;border-radius:var(--radius);background:var(--cs);border:1px solid var(--cl);border-left:8px var(--bs) var(--cl)}
+.sr-letter{display:grid;place-items:center;width:44px;height:44px;border-radius:8px;background:var(--cl);color:#fff;font:700 24px var(--font-display)}
+.sr-banner.sect-none .sr-letter{background:var(--surface);color:var(--muted);border:2px dotted var(--muted)}
+.sr-banner strong{color:var(--c);font:700 16px/1.25 var(--font-display)}
+.sr-banner p{margin:2px 0 0;font-size:13.5px;color:var(--ink)}
+.sr-edit{display:grid;gap:2px;font-size:11.5px;color:var(--muted);justify-items:end}
+@media (max-width:600px){.sr-banner{grid-template-columns:auto 1fr}.sr-edit{grid-column:1/-1;justify-items:start}}
+
+/* Tuile 1 = couleur de la conclusion */
+.tile.sect-ok,.tile.sect-b,.tile.sect-stop,.tile.sect-nc,.tile.sect-none{border-left:4px var(--bs) var(--cl)}
+
+/* Priorités */
+.prio{display:inline-block;min-width:26px;text-align:center;font:700 11px/18px var(--font-mono);border-radius:4px;padding:0 4px;margin-right:4px}
+.prio-1{background:var(--sect-stop);color:#fff}
+.prio-2{background:var(--sect-b-line);color:#fff}
+.prio-3{background:var(--warn-soft);color:var(--warn);border:1px dashed var(--warn)}
+.prio-4{background:var(--sect-nc-soft);color:var(--sect-nc)}
+.num-orig{display:block;color:var(--muted);font-size:12px}
+.legend{display:inline-flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12px;color:var(--muted)}
+.chip-check{display:inline-flex;gap:6px;align-items:center;font-size:13px}
+
+/* Lignes : remplace les 3 règles box-shadow existantes (tbody tr.remedier/surveiller/info) */
+tbody tr.rp-1 td{background:var(--sect-stop-soft)}
+tbody tr.rp-1 td:first-child{box-shadow:inset 6px 0 0 var(--sect-stop)}
+tbody tr.rp-2.sect-b td{background:var(--sect-b-soft)}
+tbody tr.rp-2 td:first-child{box-shadow:inset 6px 0 0 var(--sect-b-line)}
+tbody tr.rp-3 td:first-child{box-shadow:none;border-left:4px dashed var(--warn)}
+tbody tr.rp-4 td:first-child{box-shadow:inset 4px 0 0 var(--line)}
+tbody tr.rp-4 td{color:var(--muted)}
+tbody tr.excluded .ref{text-decoration:line-through}
+tbody tr.grp th{text-align:left;background:var(--bg);padding:8px 10px;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ink);border-bottom:1px solid var(--line);position:static}
+
+/* Mes dossiers */
+.card.sect-ok,.card.sect-b,.card.sect-stop,.card.sect-nc,.card.sect-none{border-left:6px var(--bs) var(--cl)}
+
+/* Impression : garder les couleurs, styles N&B déjà distincts */
+@media print{
+  .cl-card,.sr-banner,.sect-badge,.sect-dot,.sr-letter,.prio,tbody tr td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sr-edit,#t-order,.chip-check,.cl-side .actions{display:none}
+  .two-cards{grid-template-columns:1fr 1fr}
+  .field.is-missing input{background:none}
+  tbody tr.grp{break-after:avoid}
+  tbody tr{break-inside:avoid}
+}
+
+.cl-group input{text-overflow:ellipsis}
+
 </style>
 </head>
 <body>
@@ -234,21 +348,51 @@ dialog h3{margin:0;font:700 17px var(--font-display)}
 
 <!-- ========== DOSSIER ========== -->
 <main id="v-dossier" class="view">
-  <section class="panel">
-    <div class="toolbar" style="margin-bottom:10px">
-      <h2 style="margin:0" data-i18n="dossierTitle"></h2>
+<section id="cl-card" class="panel cl-card sect-none" aria-labelledby="cl-titre">
+  <div class="cl-head">
+    <div>
+      <p class="kicker" data-i18n="clKicker"></p>
+      <h2 id="cl-titre" class="cl-titre"></h2>
+      <p id="cl-soustitre" class="cl-sub"></p>
+    </div>
+    <div class="cl-side">
+      <span class="kicker" data-i18n="clWorst"></span>
+      <span id="cl-sect" class="sect-badge sect-none"><b>?</b><span></span></span>
+      <span id="cl-complete" class="cl-complete"></span>
       <div class="actions">
         <button id="d-new" class="btn ghost" type="button" data-i18n="dNew"></button>
         <button id="d-save-file" class="btn ghost" type="button" data-i18n="dSaveFile"></button>
       </div>
     </div>
-    <div class="dossier-head">
+  </div>
+
+  <div class="cl-grid">
+    <fieldset class="cl-group">
+      <legend data-i18n="clGrpImm"></legend>
       <div class="field"><label for="d-nom" data-i18n="dNom"></label><input id="d-nom" type="text" autocomplete="off" data-i18n-ph="dNomPh"></div>
-      <div class="field"><label for="d-adresse" data-i18n="dAdresse"></label><input id="d-adresse" type="text" autocomplete="off"></div>
-      <div class="field"><label for="d-client" data-i18n="dClient"></label><input id="d-client" type="text" autocomplete="off"></div>
+      <div class="field"><label for="cl-acp" data-i18n="clAcp"></label><input id="cl-acp" type="text" autocomplete="off"></div>
+      <div class="field"><label for="cl-imm-rue" data-i18n="clImmRue"></label><input id="cl-imm-rue" type="text" autocomplete="off"></div>
+      <div class="field"><label for="cl-imm-cp" data-i18n="clImmCp"></label><input id="cl-imm-cp" type="text" autocomplete="off"></div>
+    </fieldset>
+    <fieldset class="cl-group">
+      <legend data-i18n="clGrpSyndic"></legend>
+      <div class="field"><label for="cl-syndic" data-i18n="clSyndic"></label><input id="cl-syndic" type="text" autocomplete="off"></div>
+      <div class="field"><label for="cl-syndic-contact" data-i18n="clContact"></label><input id="cl-syndic-contact" type="text" autocomplete="off"></div>
+      <div class="field"><label for="cl-syndic-adr" data-i18n="clSyndicAdr"></label><input id="cl-syndic-adr" type="text" autocomplete="off"></div>
+      <div class="field two-col">
+        <div class="field"><label for="cl-syndic-tel" data-i18n="clTel"></label><input id="cl-syndic-tel" type="tel" autocomplete="off"></div>
+        <div class="field"><label for="cl-syndic-email" data-i18n="clEmail"></label><input id="cl-syndic-email" type="email" autocomplete="off"></div>
+      </div>
+      <p id="cl-contact-links" class="cl-links"></p>
+    </fieldset>
+    <fieldset class="cl-group">
+      <legend data-i18n="clGrpRef"></legend>
+      <div class="field"><label for="cl-ref-rapport" data-i18n="clRefRapport"></label><input id="cl-ref-rapport" type="text" autocomplete="off"></div>
+      <div class="field"><label for="cl-ref-client" data-i18n="clRefClient"></label><input id="cl-ref-client" type="text" autocomplete="off"></div>
       <div class="field"><label for="d-offre" data-i18n="dOffre"></label><input id="d-offre" type="text" autocomplete="off"></div>
-    </div>
-  </section>
+    </fieldset>
+  </div>
+</section>
 
   <section class="panel">
     <div class="toolbar" style="margin-bottom:10px">
@@ -300,15 +444,56 @@ dialog h3{margin:0;font:700 17px var(--font-display)}
     <div id="msg" class="notice hidden" style="margin-top:12px" role="status"></div>
   </section>
 
-  <section aria-labelledby="h-summary" style="display:grid;gap:10px">
-    <div class="toolbar">
-      <h2 id="h-summary" style="font:600 15px/1.3 var(--font-display);margin:0;letter-spacing:.3px;text-transform:uppercase;color:var(--muted)" data-i18n="summary"></h2>
-      <span id="example-flag" class="example-flag hidden" data-i18n="exampleFlag"></span>
-    </div>
-    <div id="meta" class="meta-line"></div>
-    <div class="tiles" id="tiles"></div>
-    <div id="check-box" class="notice hidden"></div>
+<section class="two-cards">
+  <section id="fa-card" class="panel" aria-labelledby="fa-h">
+    <h2 id="fa-h" data-i18n="faTitle"></h2>
+    <dl class="kv">
+      <div><dt data-i18n="faNom"></dt><dd id="fa-nom"></dd></div>
+      <div><dt data-i18n="faNum"></dt><dd id="fa-num"></dd></div>
+      <div><dt data-i18n="faMarque"></dt><dd id="fa-marque"></dd></div>
+      <div><dt data-i18n="faGenre"></dt><dd id="fa-genre"></dd></div>
+      <div><dt data-i18n="faAnnee"></dt><dd id="fa-annee"></dd></div>
+      <div><dt data-i18n="faCharge"></dt><dd id="fa-charge"></dd></div>
+      <div><dt data-i18n="faVitesse"></dt><dd id="fa-vitesse"></dd></div>
+      <div><dt data-i18n="faArrets"></dt><dd id="fa-arrets"></dd></div>
+      <div><dt data-i18n="faDrive"></dt><dd id="fa-drive"></dd></div>
+      <div><dt data-i18n="faEntretien"></dt><dd id="fa-entretien"></dd></div>
+      <div><dt data-i18n="faCe"></dt><dd id="fa-ce"></dd></div>
+    </dl>
   </section>
+
+  <section id="sr-card" class="panel" aria-labelledby="sr-h">
+    <h2 id="sr-h" data-i18n="srTitle"></h2>
+    <div id="sr-banner" class="sr-banner sect-none" role="status">
+      <span id="sr-letter" class="sr-letter">?</span>
+      <div><strong id="sr-word"></strong><p id="sr-explain"></p></div>
+      <label class="sr-edit"><span data-i18n="srEdit"></span>
+        <select id="sr-letter-edit" class="statut">
+          <option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>N</option><option>T</option><option>V</option>
+        </select></label>
+    </div>
+    <dl class="kv">
+      <div><dt data-i18n="mOrg"></dt><dd id="sr-org"></dd></div>
+      <div><dt data-i18n="srType"></dt><dd id="sr-type"></dd></div>
+      <div><dt data-i18n="mDate"></dt><dd id="sr-date"></dd></div>
+      <div><dt data-i18n="mNext"></dt><dd id="sr-next"></dd></div>
+      <div><dt data-i18n="mAR"></dt><dd id="sr-ar"></dd></div>
+      <div><dt data-i18n="mNextAR"></dt><dd id="sr-next-ar"></dd></div>
+      <div><dt data-i18n="mEcheance"></dt><dd id="sr-echeance"></dd></div>
+      <div><dt data-i18n="srFile"></dt><dd id="sr-file"></dd></div>
+    </dl>
+    <div id="sr-incomplet" class="notice crit hidden"></div>
+  </section>
+</section>
+
+<section aria-labelledby="h-summary" style="display:grid;gap:10px">
+  <div class="toolbar">
+    <h2 id="h-summary" class="sec-title" data-i18n="summary"></h2>
+    <span id="example-flag" class="example-flag hidden" data-i18n="exampleFlag"></span>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div id="check-box" class="notice hidden"></div>
+</section>
 
   <section aria-labelledby="h-table" style="display:grid;gap:10px">
     <div class="toolbar">
@@ -318,6 +503,13 @@ dialog h3{margin:0;font:700 17px var(--font-display)}
         <button class="chip" data-filter="alert" aria-pressed="false" data-i18n="fAlert"></button>
         <button class="chip" data-filter="info" aria-pressed="false" data-i18n="fInfo"></button>
       </div>
+      <label class="chip-check"><input id="t-order" type="checkbox"> <span data-i18n="tOrder"></span></label>
+      <span class="legend" aria-hidden="false">
+        <span class="prio prio-1">P1</span><span data-i18n="p1"></span>
+        <span class="prio prio-2">P2</span><span data-i18n="p2"></span>
+        <span class="prio prio-3">P3</span><span data-i18n="p3"></span>
+        <span class="prio prio-4">P4</span><span data-i18n="p4"></span>
+      </span>
       <div class="actions">
         <select id="x-scope" class="statut" aria-label="Export">
           <option value="dossier" data-i18n="xScopeD"></option>
@@ -20821,7 +21013,7 @@ fr:{
  title:"Application Ascenseur Control", subtitle:"Analyse de risques ou rapport de visite → tableau des remarques, solutions et codes Orona", offline:"Sans internet ni IA",
  navDossier:"Dossier en cours", navDossiers:"Mes dossiers", navRef:"Référentiel des codes", navAide:"Mode d'emploi",
  dossierTitle:"Dossier", dNew:"+ Nouveau dossier", dSaveFile:"Sauvegarder le dossier (fichier)",
- dNom:"Nom du dossier", dNomPh:"ex. ACP Waterloo 517", dAdresse:"Adresse", dClient:"Syndic / gestionnaire (c/o)", dOffre:"Réf. offre",
+ dNom:"Nom du dossier (client / ACP)", dNomPh:"rempli depuis le rapport", dAdresse:"Adresse", dClient:"Syndic / gestionnaire (c/o)", dOffre:"Réf. offre",
  appsTitle:"Appareils du dossier", aAdd:"+ Appareil", aDup:"Dupliquer l'appareil", aDel:"Supprimer l'appareil",
  aNom:"Nom de l'appareil", aNomPh:"ex. Bloc A, Ascenseur 1", aNum:"N° appareil", appDefault:n=>`Appareil ${n}`,
  confirmDelApp:"Supprimer cet appareil et son tableau ? Cliquez à nouveau pour confirmer.", lastApp:"Un dossier garde au moins un appareil.",
@@ -20844,7 +21036,20 @@ fr:{
  checkBad:(a,b)=>`Recomptage indépendant du texte : ${a} marque(s) « à remédier » trouvée(s), ${b} ligne(s) à remédier dans le tableau. Écart à vérifier.`,
  announced:n=>`Le rapport annonce ${n} remarque(s).`, missing:"Références marquées à remédier absentes du tableau :",
  checkNA:"—", checkDone:"OK", checkGap:"Écart",
- mOrg:"Organisme", mConcl:"Conclusion SECT", mNext:"Prochain contrôle", mNextAR:"Prochaine analyse de risques avant", mExam:"Examen du", mBrand:"Ascenseur", toConfirm:"à confirmer", noRemark:c=>`Rapport sans remarque à remédier${c ? " (conclusion " + c + ")" : ""} : rien à chiffrer pour cet appareil. Les informations de l'appareil ont été reprises.`, linkedInf:d=>`Lié à l'infraction : l'échéance du ${d} est dépassée, le SECT annonce une conclusion négative au prochain contrôle. À traiter en priorité avec l'infraction.`, mGenre:"Genre", mCarac:"Caractéristiques", mEntretien:"Entretien", incomplete:(p,pa,d,da)=>`⚠ Rapport partiel : ${pa ? p + " page(s) sur " + pa : ""}${pa && da ? ", " : ""}${da ? (d || 1) + " ascenseur(s) décrit(s) sur " + da + " annoncé(s)" : ""}. Les autres ascenseurs sont dans d'autres pages ou fichiers : analysez-les comme appareils séparés du même dossier.`, staleTable:f=>`⚠ Le tableau affiché plus bas est celui de l'analyse précédente (${f}), pas de ce rapport.`, mAR:"Analyse de risques du", mEcheance:"Attestation de régularisation attendue avant", mDepassee:"échéance dépassée", mDate:"Date du rapport", mDev:"Appareil", mDrive:"Entraînement",
+ mOrg:"Organisme", mConcl:"Conclusion SECT", mNext:"Prochain contrôle", mNextAR:"Prochaine analyse de risques avant", mExam:"Examen du", mBrand:"Ascenseur", toConfirm:"à confirmer", faCe:"Déclaration CE / UE", contactOrg:"contact", otherClient:(n,o)=>`⚠ Ce rapport concerne « ${n} », pas le client du dossier (« ${o} ») : ses coordonnées n'ont pas été reprises. Créez un nouveau dossier pour ce client si nécessaire.`, rapType:{ar:"Analyse de risques", insp:"Inspection préventive", visite:"Rapport de visite"},
+ clKicker:"Client", clWorst:"Conclusion la plus défavorable", clGrpImm:"Immeuble", clGrpSyndic:"Syndic", clGrpRef:"Références",
+ clAcp:"ACP / copropriété", clImmRue:"Adresse de l'immeuble", clImmCp:"Code postal et commune", clSyndic:"Syndic / gestionnaire",
+ clContact:"Personne de contact", clSyndicAdr:"Adresse du syndic", clTel:"Téléphone", clEmail:"E-mail",
+ clRefRapport:"Réf. rapport SECT", clRefClient:"Réf. client / dossier syndic", clComplete:(n,t)=>`Fiche complète : ${n}/${t}`,
+ notFound:"Non trouvé dans le rapport", srcReport:p=>p?`rapport p. ${p}`:"rapport", srcManual:"saisi",
+ faTitle:"Fiche appareil", faNom:"Appareil", faNum:"N° appareil / fabrication", faMarque:"Marque et type", faGenre:"Genre",
+ faAnnee:"Année de construction", faCharge:"Charge / personnes", faVitesse:"Vitesse", faArrets:"Niveaux desservis", faDrive:"Entraînement", faEntretien:"Entretenu par",
+ srTitle:"Situation réglementaire", srType:"Type de rapport", srFile:"Fichier analysé", srEdit:"Corriger la conclusion",
+ sectConcl:"Conclusion",
+ sect:{ok:"Rien d'anormal", b:"À corriger rapidement", stop:"Arrêt ou utilisation conditionnée", nc:"Non contrôlé / hors service", none:"Conclusion non trouvée"},
+ sectExplain:{ok:"Aucune remarque bloquante. Vérifier quand même les points à surveiller.", b:"Appareil en service. Les points à remédier doivent être corrigés avant le prochain contrôle.", stop:"Arrêt ou utilisation sous conditions : priorité absolue, contacter le syndic.", nc:"Appareil non contrôlé ou hors service : vérifier la situation avec le syndic.", none:"Conclusion SECT non trouvée dans le rapport : à saisir."},
+ p1:"Urgent — arrêt ou utilisation conditionnée", p2:"À remédier", p3:"À surveiller", p4:"Info", tOrder:"Ordre du rapport",
+ noRemark:c=>`Rapport sans remarque à remédier${c ? " (conclusion " + c + ")" : ""} : rien à chiffrer pour cet appareil. Les informations de l'appareil ont été reprises.`, linkedInf:d=>`Lié à l'infraction : l'échéance du ${d} est dépassée, le SECT annonce une conclusion négative au prochain contrôle. À traiter en priorité avec l'infraction.`, mGenre:"Genre", mCarac:"Caractéristiques", mEntretien:"Entretien", incomplete:(p,pa,d,da)=>`⚠ Rapport partiel : ${pa ? p + " page(s) sur " + pa : ""}${pa && da ? ", " : ""}${da ? (d || 1) + " ascenseur(s) décrit(s) sur " + da + " annoncé(s)" : ""}. Les autres ascenseurs sont dans d'autres pages ou fichiers : analysez-les comme appareils séparés du même dossier.`, staleTable:f=>`⚠ Le tableau affiché plus bas est celui de l'analyse précédente (${f}), pas de ce rapport.`, mAR:"Analyse de risques du", mEcheance:"Attestation de régularisation attendue avant", mDepassee:"échéance dépassée", mDate:"Date du rapport", mDev:"Appareil", mDrive:"Entraînement",
  noCode:"Point d'alerte : code non trouvé.", unknownCode:c=>`Code ${c} absent du référentiel.`, inactiveCode:c=>`Code ${c} désactivé dans le référentiel.`, pendingCode:c=>`Code ${c} : modification proposée, pas encore validée par le référent.`,
  statusGuess:"Statut non indiqué clairement dans le rapport : à vérifier.",
  sameRefOtherText:"Même référence qu'une remarque validée, mais texte différent : vérifier.",
@@ -20918,7 +21123,7 @@ nl:{
  title:"Application Ascenseur Control", subtitle:"Risicoanalyse of keuringsverslag → tabel met opmerkingen, oplossingen en Orona-codes", offline:"Zonder internet en zonder AI",
  navDossier:"Huidig dossier", navDossiers:"Mijn dossiers", navRef:"Codereferentie", navAide:"Handleiding",
  dossierTitle:"Dossier", dNew:"+ Nieuw dossier", dSaveFile:"Dossier opslaan (bestand)",
- dNom:"Dossiernaam", dNomPh:"bv. VME Honas", dAdresse:"Adres", dClient:"Syndicus / beheerder (c/o)", dOffre:"Ref. offerte",
+ dNom:"Dossiernaam (klant / VME)", dNomPh:"ingevuld uit het verslag", dAdresse:"Adres", dClient:"Syndicus / beheerder (c/o)", dOffre:"Ref. offerte",
  appsTitle:"Toestellen in het dossier", aAdd:"+ Toestel", aDup:"Toestel dupliceren", aDel:"Toestel verwijderen",
  aNom:"Naam van het toestel", aNomPh:"bv. Blok A, Lift 1", aNum:"Toestelnr.", appDefault:n=>`Toestel ${n}`,
  confirmDelApp:"Dit toestel en zijn tabel verwijderen? Klik nogmaals om te bevestigen.", lastApp:"Een dossier houdt minstens één toestel.",
@@ -20941,7 +21146,20 @@ nl:{
  checkBad:(a,b)=>`Onafhankelijke hertelling van de tekst: ${a} markering(en) « te verhelpen » gevonden, ${b} te verhelpen regel(s) in de tabel. Verschil na te kijken.`,
  announced:n=>`Het verslag vermeldt ${n} opmerking(en).`, missing:"Referenties gemarkeerd als te verhelpen die ontbreken in de tabel:",
  checkNA:"—", checkDone:"OK", checkGap:"Verschil",
- mOrg:"Keuringsorganisme", mConcl:"Conclusie EDTC", mNext:"Volgende keuring", mNextAR:"Volgende risicoanalyse vóór", mExam:"Onderzoek van", mBrand:"Lift", toConfirm:"te bevestigen", noRemark:c=>`Verslag zonder te verhelpen opmerkingen${c ? " (conclusie " + c + ")" : ""}: niets te prijzen voor dit toestel. De gegevens van het toestel zijn overgenomen.`, linkedInf:d=>`Verbonden met de inbreuk: de termijn van ${d} is verstreken, de EDTC kondigt een negatieve conclusie aan bij de volgende keuring. Prioritair te behandelen.`, mGenre:"Soort", mCarac:"Kenmerken", mEntretien:"Onderhoud", incomplete:(p,pa,d,da)=>`⚠ Gedeeltelijk verslag: ${pa ? p + " pagina('s) van " + pa : ""}${pa && da ? ", " : ""}${da ? (d || 1) + " lift(en) beschreven van " + da + " aangekondigd" : ""}. De andere liften staan op andere pagina's of in andere bestanden: analyseer ze als aparte toestellen in hetzelfde dossier.`, staleTable:f=>`⚠ De tabel hieronder is die van de vorige analyse (${f}), niet van dit verslag.`, mAR:"Risicoanalyse van", mEcheance:"Regularisatieattest verwacht vóór", mDepassee:"termijn verstreken", mDate:"Datum verslag", mDev:"Toestel", mDrive:"Aandrijving",
+ mOrg:"Keuringsorganisme", mConcl:"Conclusie EDTC", mNext:"Volgende keuring", mNextAR:"Volgende risicoanalyse vóór", mExam:"Onderzoek van", mBrand:"Lift", toConfirm:"te bevestigen", faCe:"EG- / EU-verklaring", contactOrg:"contact", otherClient:(n,o)=>`⚠ Dit verslag betreft « ${n} », niet de klant van het dossier (« ${o} »): de gegevens zijn niet overgenomen. Maak zo nodig een nieuw dossier voor deze klant.`, rapType:{ar:"Risicoanalyse", insp:"Preventieve keuring", visite:"Bezoekverslag"},
+ clKicker:"Klant", clWorst:"Meest ongunstige conclusie", clGrpImm:"Gebouw", clGrpSyndic:"Syndicus", clGrpRef:"Referenties",
+ clAcp:"VME / mede-eigendom", clImmRue:"Adres van het gebouw", clImmCp:"Postcode en gemeente", clSyndic:"Syndicus / beheerder",
+ clContact:"Contactpersoon", clSyndicAdr:"Adres syndicus", clTel:"Telefoon", clEmail:"E-mail",
+ clRefRapport:"Ref. keuringsverslag", clRefClient:"Ref. klant / dossier syndicus", clComplete:(n,t)=>`Fiche volledig: ${n}/${t}`,
+ notFound:"Niet gevonden in het verslag", srcReport:p=>p?`verslag p. ${p}`:"verslag", srcManual:"ingevuld",
+ faTitle:"Toestelfiche", faNom:"Toestel", faNum:"Toestelnr. / fabricagenr.", faMarque:"Merk en type", faGenre:"Soort",
+ faAnnee:"Bouwjaar", faCharge:"Last / personen", faVitesse:"Snelheid", faArrets:"Stopplaatsen", faDrive:"Aandrijving", faEntretien:"Onderhouden door",
+ srTitle:"Reglementaire toestand", srType:"Soort verslag", srFile:"Geanalyseerd bestand", srEdit:"Conclusie corrigeren",
+ sectConcl:"Conclusie",
+ sect:{ok:"Geen afwijkingen", b:"Snel te verhelpen", stop:"Stilstand of voorwaardelijk gebruik", nc:"Niet gekeurd / buiten dienst", none:"Conclusie niet gevonden"},
+ sectExplain:{ok:"Geen blokkerende opmerkingen. Toch de op te volgen punten nakijken.", b:"Toestel in dienst. De te verhelpen punten moeten vóór de volgende keuring verholpen zijn.", stop:"Stilstand of gebruik onder voorwaarden: absolute prioriteit, syndicus contacteren.", nc:"Toestel niet gekeurd of buiten dienst: situatie nagaan bij de syndicus.", none:"EDTC-conclusie niet gevonden in het verslag: in te vullen."},
+ p1:"Dringend — stilstand of voorwaardelijk gebruik", p2:"Te verhelpen", p3:"Op te volgen", p4:"Info", tOrder:"Volgorde van het verslag",
+ noRemark:c=>`Verslag zonder te verhelpen opmerkingen${c ? " (conclusie " + c + ")" : ""}: niets te prijzen voor dit toestel. De gegevens van het toestel zijn overgenomen.`, linkedInf:d=>`Verbonden met de inbreuk: de termijn van ${d} is verstreken, de EDTC kondigt een negatieve conclusie aan bij de volgende keuring. Prioritair te behandelen.`, mGenre:"Soort", mCarac:"Kenmerken", mEntretien:"Onderhoud", incomplete:(p,pa,d,da)=>`⚠ Gedeeltelijk verslag: ${pa ? p + " pagina('s) van " + pa : ""}${pa && da ? ", " : ""}${da ? (d || 1) + " lift(en) beschreven van " + da + " aangekondigd" : ""}. De andere liften staan op andere pagina's of in andere bestanden: analyseer ze als aparte toestellen in hetzelfde dossier.`, staleTable:f=>`⚠ De tabel hieronder is die van de vorige analyse (${f}), niet van dit verslag.`, mAR:"Risicoanalyse van", mEcheance:"Regularisatieattest verwacht vóór", mDepassee:"termijn verstreken", mDate:"Datum verslag", mDev:"Toestel", mDrive:"Aandrijving",
  noCode:"Waarschuwing: code niet gevonden.", unknownCode:c=>`Code ${c} staat niet in de referentie.`, inactiveCode:c=>`Code ${c} is gedeactiveerd in de referentie.`, pendingCode:c=>`Code ${c}: wijziging voorgesteld, nog niet gevalideerd door de referent.`,
  statusGuess:"Status niet duidelijk vermeld in het verslag: na te kijken.",
  sameRefOtherText:"Zelfde referentie als een gevalideerde opmerking, maar andere tekst: nakijken.",
@@ -21010,7 +21228,7 @@ nl:{
 
 "use strict";
 /* ===================== Outils généraux ===================== */
-const APP_VERSION = "2.0.5 — 26/11/2026"; window.AC_VERSION = APP_VERSION;
+const APP_VERSION = "2.1 — 26/11/2026"; window.AC_VERSION = APP_VERSION;
 const REF_TYPE = "referentiel-ascenseur-control", PROPS_TYPE = "propositions-ascenseur-control", DOSSIER_TYPE = "dossier-ascenseur-control";
 /* L'intitulé d'offre GOA (avec prix) n'est PAS dans le code source : il vient du référentiel interne (règle 2i/104). */
 const GOA_INTITULE = typeof INITIAL_GOA_INTITULE !== "undefined" ? INITIAL_GOA_INTITULE : "";
@@ -21393,7 +21611,7 @@ function readFiche(lines){
       // valeur coupée en fin de ligne (ex. « COOPMAN » / « ORONA ») : reprendre le 1er mot de la ligne suivante s'il est seul
       const nx = lines[i + 1] && lines[i + 1].t.trim();
       const nx0 = nx ? nx.split(/\s+/)[0] : "";
-      if (v && nx && j === ms.length - 1 && /^[A-ZÀ-Ü]{2,}$/.test(v.split(" ").pop()) && /^[A-ZÀ-Ü]{2,}$/.test(nx0)) v += " " + nx0; // « COOPMAN » / « ORONA »
+      if (v && nx && (j === ms.length - 1 || k === "entretien" || k === "marque") && /^[A-ZÀ-Ü]{2,}$/.test(v.split(" ").pop()) && /^[A-ZÀ-Ü]{2,}$/.test(nx0) && nx0.length > 1 && !v.includes(nx0)) v += " " + nx0; // « COOPMAN » / « ORONA »
       else if (v && nx && k === "batiment" && /^(?:d['’]|[a-zà-ÿ]{2,})/.test(nx0) && !nx0.includes(":")) v += " " + nx0; // « hall » / « d'entrée »
       KV_RX.lastIndex = 0;
       if (v && v !== ":" && !/^[:.\-]+$/.test(v)) f[k] = v.replace(/\s{2,}/g, " ");
@@ -21404,10 +21622,31 @@ function readFiche(lines){
   for (const l of lines.slice(0, 40)) {
     const a = l.t.match(/\b((?:A\.?C\.?P\.?|V\.?M\.?E\.?|Copropri[ée]t[ée]|Residentie|R[ée]sidence|R[ée]s\.)\s+.+?)\s*$/i);
     if (a && !f.acp && !/lieu|plaats|:/i.test(l.t.slice(0, a.index))) f.acp = titleCase(a[1].trim());
-    const c = l.t.match(/\bc\/o\s+(.+?)\s*$/i); if (c && !f.syndic) f.syndic = titleCase(c[1].trim());
+    const c = l.t.match(/\b(?:c\/o|p\/a|per\s+adres)\s+(.+?)\s*$/i); if (c && !f.syndic) f.syndic = titleCase(c[1].trim());
   }
-  if (f.lieu) { const i = lines.findIndex(l => /Lieu\s*de\s*contr|Lieu\s*de\s*l.examen|Plaats\s*van/i.test(l.t)); const nx = lines[i + 1] && lines[i + 1].t.trim(); if (nx && /^\d{4}\s+[A-ZÀ-Üa-zà-ÿ-]+$/.test(nx)) f.lieu += ", " + nx; f.lieu = titleCase(f.lieu); if (f.acp && norm(f.lieu).startsWith(norm(f.acp))) f.lieu = f.lieu.slice(f.acp.length).trim(); }
+  // adresse du syndic : 1 à 3 lignes sous « c/o » (colonne de droite, fin de ligne)
+  const ci = lines.findIndex(l => /\b(?:c\/o|p\/a|per\s+adres)\s+/i.test(l.t));
+  if (ci >= 0) for (const l of lines.slice(ci + 1, ci + 5)) {
+    const t = l.t.replace(/\s+/g, " ").trim();
+    const rue = t.match(/((?:rue|avenue|av\.|chauss[ée]e|boulevard|bd|place|square|clos|dr[èe]ve|all[ée]e|chemin|quai|parvis|galerie)\s+[^\d:]+?|[A-ZÀ-Üa-zà-ÿ'’\-]*(?:straat|laan|lei|steenweg|plein|weg|dreef|baan|kaai|singel))\s+(\d+[A-Za-z]?(?:\s*(?:bte|bus|boîte|b\.)\s*\S+)?)\s*$/i);
+    if (rue && !f.syndicRue) { f.syndicRue = titleCase(rue[1].trim() + " " + rue[2]); continue; }
+    const cp = t.match(/\b([1-9]\d{3})\s+([A-ZÀ-Ü][A-Za-zÀ-ÿ'’\-]+(?:[ \-][A-Za-zÀ-ÿ'’\-]+)*)\s*$/);
+    if (cp && f.syndicRue && !f.syndicCp) { f.syndicCp = cp[1] + " " + titleCase(cp[2]); break; }
+  }
+  const all = lines.map(l => l.t).join("\n");
+  const em = all.match(/(?:envoy[ée]\s+par\s+e-?mail\s+[àa]|per\s+e-?mail\s+verzonden\s+naar|verzonden\s+per\s+e-?mail\s+naar)\s*:?\s*([\w.+-]+@[\w-]+(?:\.[\w-]+)+)/i); if (em) f.email = em[1];
+  const ct = all.match(/^\s*Info\s*:\s*([A-Za-zÀ-ÿ][^:\n]{1,40}?)\s*:\s*(\+?\d[\d \/.]{7,}\d)/im); if (ct) f.contactOrg = ct[1].trim() + " " + ct[2].trim(); // en-tête de l'organisme
+  const ce = all.match(/d[ée]claration\s+UE\s+de\s+conformit[ée]\s+du\s+(\d{1,2}\/\d{1,2}\/\d{4})\s*(CE\s*\d+)?/i) || all.match(/EU-?conformiteitsverklaring\s+van\s+(\d{1,2}\/\d{1,2}\/\d{4})\s*(CE\s*\d+)?/i);
+  if (ce) f.ce = (S.lang === "nl" ? "EU-verklaring van " : "Déclaration UE du ") + ce[1] + (ce[2] ? " (" + ce[2].replace(/\s+/, " ") + ")" : "");
+  else { const ce2 = all.match(/D[ée]claration\s+CE\s*:\s*(\S+)/i); if (ce2) f.ce = "Déclaration CE : " + ce2[1]; }
+  const nr = all.match(/N°\s*du\s*rapport\s*:?\s*:?\s*(\d{4}-\d{6}-\d{2})/i) || all.match(/\bN\.\s*R[ée]f\.?\s*:\s*([A-Z0-9][\w\/.\-]{4,})/i) || all.match(/^\s*(?:Info\s*:.*?\s)?Ref\s*\.\s*([\d.]{5,})/im); if (nr) f.refRapport = nr[1];
+  const vr = all.match(/\bV\.[ \t]*R[ée]f\.?[ \t]*:[ \t]*([^\n]*?)[ \t]*(?:T[ée]l|$)/im); if (vr && vr[1].trim()) f.refClient = vr[1].trim();
+  const pe = all.match(/(?:P[ée]riodicit[ée]|Periodiciteit)\s*:\s*(\S+)/i) || all.match(/Contr[ôo]les\s+et\s+tests[^:\n]*:\s*(trimestriel|semestriel|annuel)/i); if (pe) f.periodicite = pe[1];
+  f.typeRapport = /analyse de risques?\s*$|rapport d.analyse de risques|risicoanalyse(verslag)?\s*$/im.test(all) && !/inspection preventive|inspection préventive|preventieve keuring/i.test(all) ? "ar" : (/inspection pr[ée]ventive|preventieve keuring/i.test(all) ? "insp" : (/visite|bezoek/i.test(all) ? "visite" : ""));
+  if (f.lieu) { const i = lines.findIndex(l => /Lieu\s*de\s*contr|Lieu\s*de\s*l.examen|Plaats\s*van/i.test(l.t)); const nx = lines[i + 1] && lines[i + 1].t.trim(); if (nx && /^\d{4}\s+[A-ZÀ-Üa-zà-ÿ-]+$/.test(nx)) f.lieuCp = titleCase(nx); f.lieu = titleCase(f.lieu); if (f.acp && norm(f.lieu).startsWith(norm(f.acp))) f.lieu = f.lieu.slice(f.acp.length).trim();
+    if (!f.lieuCp) { const m2 = f.lieu.match(/^(.*?)[,\s-]+([1-9]\d{3}\s+[A-ZÀ-Üa-zà-ÿ'’\- ]+)$/); if (m2) { f.lieu = m2[1].trim(); f.lieuCp = m2[2].trim(); } else { const m3 = f.lieu.match(/^(.*)\s+-\s+([A-ZÀ-Ü][A-Za-zÀ-ÿ'’\-]+(?:-[A-Za-zÀ-ÿ'’]+)*)$/); if (m3) { f.lieu = m3[1].trim(); f.lieuCp = m3[2].trim(); } } } }
   if (f.entretien) f.entretien = titleCase(f.entretien);
+  if (f.charge && /\d+\s*pers/i.test(f.charge) && !f.personnes) { const pm = f.charge.match(/(\d+)\s*pers\.?/i); f.personnes = pm[1] + " pers."; f.charge = f.charge.replace(pm[0], "").replace(/^[\s\-–·]+|[\s\-–·]+$/g, ""); }
   if (f.marque) f.marque = titleCase(f.marque);
   // entraînement déduit des caractéristiques (jamais du texte général : les listes de contrôle citent tout)
   const car = norm([f.genre, f.type, f.entrainement].filter(Boolean).join(" "));
@@ -21429,9 +21668,11 @@ function readMeta(text){
   const ap = text.match(/(?:n[°o]\s*(?:d'?\s*)?(?:appareil|fabrication|de serie)|toestel(?:nummer|nr)?|fabricatienummer)\s*[:.]?\s*([A-Z0-9][A-Z0-9\/.\-]{2,})/i); if (ap) m.appareil = ap[1];
   const nx = n.match(/(?:controle suivant|prochain controle|volgende (?:keuring|controle))\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/); if (nx) m.prochain = nx[1];
   const ar = n.match(/analyse de risques? effectuee le\s*([\d\/ ]{8,14}\d)\s*(?:nr|n)?[°o.]?\s*([\d-]{6,})?/); if (ar) m.analyse = (ar[1].replace(/\s+/g, "") + (ar[2] ? " n° " + ar[2] : ""));
-  const cc = text.match(/\((?:CONCLUSION|CONCLUSIE)\s*:\s*([A-EN-V])\)/i) || text.match(/\b(?:conclusion|conclusie)\s*:\s*([A-E])\b/i); if (cc) m.conclusion = cc[1].toUpperCase();
+  { const RK = {A:1, N:2, T:2, V:2, B:3, C:4, D:4, E:4}; let worst = "";
+    for (const mm of text.matchAll(/\((?:CONCLUSION|CONCLUSIE)\s*:\s*([A-ENTV])\)|\b(?:conclusion|conclusie)\s*:\s*([A-ENTV])\b/gi)) { const l = (mm[1] || mm[2]).toUpperCase(); if (!worst || RK[l] > RK[worst]) worst = l; }
+    if (worst) m.conclusion = worst; }
   const en = text.match(/\b(?:entretien|onderhoud(?:sfirma)?)\s*:\s*([A-Za-zÀ-ÿ][\wÀ-ÿ .&'-]{2,40}?)(?:\s*\*|\s{2,}|\s+arr[eê]ts|\s+stopplaatsen|$)/im); if (en) m.entretien = en[1].trim();
-  const ex = text.match(/\b(?:examen du|onderzoek van|datum onderzoek)\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i); if (ex) m.examen = ex[1];
+  const ex = text.match(/\b(?:examen du|date de contr[ôo]le|onderzoek van|datum onderzoek)\s*:?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i); if (ex) m.examen = ex[1];
   const pg = text.match(/\b(\d)\s*\/\s*(\d)\s*$/m); // « 1/2 » en en-tête de page
   const na2 = n.match(/identification\s*:?\s*(\d+)\s*ascenseurs|identificatie\s*:?\s*(\d+)\s*liften/);
   m._pagesAnnoncees = pg ? +pg[2] : 0; m._appAnnonces = na2 ? +(na2[1] || na2[2]) : 0;
@@ -21518,18 +21759,20 @@ function analyseLines(lines, lang){
   const rows = blocks.map(b => {
     const stx = b.st ? {st:b.st, sure:true} : statusOf(b.raw);
     let rec = recognise(b.ref, b.body, lang);
-    if (b.kind === "rem" && rec.source === "none" && meta.echeanceDepassee && meta.echeance && norm(b.body).includes(meta.echeance)) rec = {...rec, e:T[lang].linkedInf(meta.echeance), zone:"GEN"};
+    if (b.kind === "rem" && rec.source === "none" && meta.echeanceDepassee && meta.echeance && norm(b.body).includes(meta.echeance)) rec = {...rec, e:T[lang].linkedInf(meta.echeance), zone:"GEN", linked:true};
     if (b.kind === "inf" && rec.source === "none" && MOD_OVERDUE_RX.test(norm(b.body))) rec = {...rec, e:MOD_OVERDUE[lang].e, s:MOD_OVERDUE[lang].s, zone:"GEN", code:"DR2240", conf:"probable", source:"theme"};
     return mkRow({ref:b.ref, page:b.page, statut:stx.st, statusGuess:!stx.sure, texte:cleanBody(b.body).slice(0,1200),
       explication:rec.e, solution:rec.s, code:rec.code, intitule:rec.intitule, zone:rec.zone, source:rec.source, confiance:rec.conf, alts:rec.alts, warn:rec.warn,
-      mesure:measureOf(b.body, lang), include: stx.st === "remedier" && stx.sure});
+      mesure:measureOf(b.body, lang), include: stx.st === "remedier" && stx.sure, linked: !!rec.linked});
   });
   const rc = method === "sections" ? recountSections(lines, rows) : recount(lines, rows);
   const fiche = readFiche(lines); meta.fiche = fiche;
   // rapport sans remarque (« Remarques : nihil / néant / geen ») — résultat valable, pas un échec de lecture
-  meta.sansRemarque = /(remarques|opmerkingen|infractions|inbreuken)\s*:?\s*(nihil|neant|aucune?|geen|n\/a|\/)(\s|$)/.test(norm(full)) || /rien d.anormal|niets abnormaals|geen opmerkingen/.test(norm(full));
+  meta.sansRemarque = /(remarques|opmerkingen|infractions|inbreuken)\s*:?\s*(nihil|neant|aucune?|geen|n\/a|\/)(\s|$)/.test(norm(full))  || meta.conclusion === "A";
   if (fiche.fab && !meta.appareil) meta.appareil = fiche.fab;
   if (fiche.entretien) meta.entretien = fiche.entretien;
+  if (!meta.prochain && meta.examen && fiche.periodicite) { const mo = /semest|halfjaar/i.test(fiche.periodicite) ? 6 : /trimest|kwartaal/i.test(fiche.periodicite) ? 3 : /annuel|jaarlijks/i.test(fiche.periodicite) ? 12 : 0;
+    if (mo) { const [dd, mm, yy] = meta.examen.split("/").map(Number); const dt = new Date(yy, mm - 1 + mo, dd); meta.prochain = `${String(dt.getDate()).padStart(2, "0")}/${String(dt.getMonth() + 1).padStart(2, "0")}/${dt.getFullYear()} (${lang === "nl" ? "berekend" : "calculé"} : ${fiche.periodicite})`; } }
   return {meta, rows, check:{count: rc.count, missing: rc.missing, annonce: meta.annonce || ""}, textLen: full.replace(/\s/g,"").length, pages: new Set(lines.map(l => l.p).filter(Boolean)).size, method};
 }
 function mkRow(o){
@@ -21538,7 +21781,7 @@ function mkRow(o){
     texte:String(o.texte||"").trim(), explication:o.explication||"", solution:o.solution||"", code:String(o.code||"").toUpperCase().trim(), intitule:o.intitule||"",
     zone:ZONES.fr[o.zone] ? o.zone : "ZZZ", source:["learned","local","rule","theme","none"].includes(o.source) ? o.source : "none", confiance:["certain","probable","verifier"].includes(o.confiance) ? o.confiance : "verifier",
     alts:Array.isArray(o.alts) ? o.alts.filter(x => CODE_RX.test(String(x))) : [], warn:Array.isArray(o.warn) ? o.warn.filter(w => typeof w === "string") : [],
-    mesure:String(o.mesure||""), include:o.include !== undefined ? !!o.include : true, learnedNow:!!o.learnedNow, edited:!!o.edited};
+    mesure:String(o.mesure||""), include:o.include !== undefined ? !!o.include : true, learnedNow:!!o.learnedNow, edited:!!o.edited, linked:!!o.linked};
 }
 
 /* Contrôles par ligne */
@@ -21571,7 +21814,7 @@ function checksFor(r, app){
 "use strict";
 /* ===================== Dossiers multi-appareils ===================== */
 function newApp(){ return {id:uid(), nom:"", numero:"", entrainement:"auto", outLang:S.lang, meta:{}, check:null, rows:[], fichier:"", analyseLe:""}; }
-function newDossier(){ return {type:DOSSIER_TYPE, schema:2, id:uid(), nom:"", adresse:"", client:"", refOffre:"", creeLe:nowIso(), modifieLe:nowIso(), auteur:S.user.nom||"", exemple:false, appareils:[newApp()]}; }
+function newDossier(){ return {type:DOSSIER_TYPE, schema:3, id:uid(), nom:"", client:{acp:"", immRue:"", immCp:"", syndic:"", contact:"", syndicAdr:"", tel:"", email:"", refRapport:"", refClient:""}, clientSrc:{}, refOffre:"", creeLe:nowIso(), modifieLe:nowIso(), auteur:S.user.nom||"", exemple:false, appareils:[newApp()]}; }
 const appName = (a, i) => [a.nom, a.numero].filter(Boolean).join(" – ") || T[S.lang].appDefault(i + 1);
 
 function driveLabel(a, lang){
@@ -21603,10 +21846,62 @@ async function openDossier(d){
   if (!d.exemple) await DB.set("lastDossier", d.id);
   fillDossierForm(); renderDossier(); showView("dossier");
 }
-function fillDossierForm(){
-  const d = S.dossier;
-  $("#d-nom").value = d.nom || ""; $("#d-adresse").value = d.adresse || ""; $("#d-client").value = d.client || ""; $("#d-offre").value = d.refOffre || "";
+/* ---------- Fiche client (objet dossier.client, schéma 3) ---------- */
+const CL_FIELDS = [["cl-acp","acp"],["cl-imm-rue","immRue"],["cl-imm-cp","immCp"],["cl-syndic","syndic"],["cl-syndic-contact","contact"],["cl-syndic-adr","syndicAdr"],["cl-syndic-tel","tel"],["cl-syndic-email","email"],["cl-ref-rapport","refRapport"],["cl-ref-client","refClient"]];
+function ensureClient(d){
+  if (!d.client || typeof d.client !== "object") { const old = typeof d.client === "string" ? d.client : ""; d.client = {acp:"", immRue:d.adresse || "", immCp:"", syndic:old, contact:"", syndicAdr:"", tel:"", email:"", refRapport:"", refClient:""}; d.clientSrc = {}; if (d.adresse) d.clientSrc.immRue = "saisie"; if (old) d.clientSrc.syndic = "saisie"; delete d.adresse; d.schema = 3; }
+  CL_FIELDS.forEach(([, k]) => { d.client[k] = String(d.client[k] ?? ""); });
+  d.clientSrc = d.clientSrc && typeof d.clientSrc === "object" ? d.clientSrc : {};
+  return d;
 }
+/* Remplit les champs vides du dossier avec ce que le rapport contient (jamais d'écrasement d'une saisie) */
+function clientFromReport(d, fi, meta){
+  ensureClient(d);
+  // autre client que celui du dossier : on ne mélange pas les coordonnées
+  if (d.client.acp && fi.acp && norm(d.client.acp) !== norm(fi.acp)) return fi.acp;
+  const map = {acp:fi.acp, immRue:fi.lieu, immCp:fi.lieuCp, syndic:fi.syndic, contact:fi.contact, syndicAdr:[fi.syndicRue, fi.syndicCp].filter(Boolean).join(", "), tel:fi.tel, email:fi.email, refRapport:fi.refRapport, refClient:fi.refClient};
+  for (const [k, v] of Object.entries(map)) if (v && (!d.client[k] || d.clientSrc[k] === "rapport")) { d.client[k] = v; d.clientSrc[k] = fi.telDouteux && k === "tel" ? "douteux" : "rapport"; }
+  if (!d.nom || d.nomAuto) { const nm = fi.acp || fi.lieu || ""; if (nm) { d.nom = nm; d.nomAuto = true; } }
+}
+function fillDossierForm(){
+  const d = ensureClient(S.dossier);
+  $("#d-nom").value = d.nom || ""; $("#d-offre").value = d.refOffre || "";
+  CL_FIELDS.forEach(([id, k]) => { $("#" + id).value = d.client[k] || ""; });
+  renderClient();
+}
+function renderClient(){
+  const L = T[S.lang], d = ensureClient(S.dossier), c = d.client;
+  $("#cl-titre").textContent = d.nom || c.acp || L.untitled;
+  $("#cl-soustitre").textContent = [c.immRue, c.immCp].filter(Boolean).join(", ");
+  let n = 0;
+  CL_FIELDS.forEach(([id, k]) => {
+    const inp = $("#" + id), fld = inp.closest(".field"), v = c[k], src = d.clientSrc[k] || (v ? "saisie" : "vide");
+    if (v) n++;
+    fld.dataset.src = v ? src : "vide"; fld.classList.toggle("is-missing", !v && k !== "refClient");
+    inp.placeholder = v ? "" : (k === "refClient" ? "" : L.notFound); inp.title = v || L.notFound;
+    let sm = fld.querySelector(".src"); if (!sm) { sm = document.createElement("small"); sm.className = "src"; fld.appendChild(sm); }
+    sm.textContent = !v ? "" : src === "rapport" ? L.srcReport("") : src === "douteux" ? L.srcReport("") + " — " + L.toConfirm : L.srcManual;
+  });
+  const cpl = $("#cl-complete"); cpl.textContent = L.clComplete(n, CL_FIELDS.length); cpl.classList.toggle("gap", n < CL_FIELDS.length - 2);
+  const links = [];
+  if (c.tel) links.push(`<a href="tel:${esc(c.tel.replace(/[^\d+]/g, ""))}">${esc(c.tel)}</a>`);
+  if (c.email && /^[\w.+-]+@[\w-]+(\.[\w-]+)+$/.test(c.email)) links.push(`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`);
+  $("#cl-contact-links").innerHTML = links.join("");
+  const ws = dossierSect(d), card = $("#cl-card");
+  card.className = "panel cl-card sect-" + ws.grp;
+  $("#cl-sect").className = "sect-badge sect-" + ws.grp; $("#cl-sect").innerHTML = `<b>${esc(ws.letter)}</b><span>${esc(L.sect[ws.grp])}</span>`;
+}
+/* ---------- Conclusion SECT : couleur et priorité ---------- */
+const SECT = {A:"ok", B:"b", C:"stop", D:"stop", E:"stop", N:"nc", T:"nc", V:"nc"};
+const SECT_RANK = {none:0, ok:1, nc:2, b:3, stop:4};
+function sectOf(a){ const l = (((a && a.meta) || {}).conclusion || "").toUpperCase(); let grp = SECT[l] || "none"; if (grp === "ok" && a.meta.echeanceDepassee) grp = "b"; return {letter: l || "?", grp}; }
+function dossierSect(d){ return d.appareils.map(sectOf).reduce((w, s) => SECT_RANK[s.grp] > SECT_RANK[w.grp] ? s : w, {letter:"?", grp:"none"}); }
+function prioOf(r, a){
+  if (r.statut === "remedier") return sectOf(a).grp === "stop" ? 1 : 2;
+  if (r.statut === "surveiller" && r.linked) return 2; // lié à une infraction (échéance dépassée)
+  return r.statut === "surveiller" ? 3 : 4;
+}
+function sortedRows(a, rows){ return $("#t-order") && $("#t-order").checked ? rows : [...rows].sort((x, y) => prioOf(x, a) - prioOf(y, a) || a.rows.indexOf(x) - a.rows.indexOf(y)); }
 function fillAppForm(){
   const a = curApp();
   $("#a-nom").value = a.nom || ""; $("#a-num").value = a.numero || ""; $("#drive").value = a.entrainement || "auto"; $("#outlang").value = a.outLang || S.lang;
@@ -21616,26 +21911,36 @@ function fillAppForm(){
 function renderApps(){
   const d = S.dossier;
   $("#apps").innerHTML = d.appareils.map((a, i) => { const rem = a.rows.filter(r => r.statut === "remedier").length;
-    return `<button type="button" class="app-tab" role="tab" data-app="${i}" aria-selected="${i === S.appIdx}">${esc(appName(a, i))}${a.rows.length ? `<span class="cnt">${rem}</span>` : ""}</button>`; }).join("");
+    const st = sectOf(a), L = T[S.lang];
+    return `<button type="button" class="app-tab sect-${st.grp}" role="tab" data-app="${i}" aria-selected="${i === S.appIdx}" aria-label="${esc(appName(a, i))} — ${esc(L.sectConcl)} ${esc(st.letter)} — ${esc(L.sect[st.grp])}"><span class="sect-dot" aria-hidden="true">${esc(st.letter)}</span>${esc(appName(a, i))}${a.rows.length ? `<span class="cnt">${rem}</span>` : ""}</button>`; }).join("");
   $("#a-del").disabled = d.appareils.length < 2;
 }
-function renderMeta(){
-  const L = T[S.lang], a = curApp(), m = a.meta || {}, it = [];
-  const add = (k, v) => { if (v) it.push(`<span>${esc(L[k])} : <b>${esc(v)}</b></span>`); };
-  const fi = m.fiche || {};
-  add("mOrg", m.organisme); add("mDate", m.date_rapport); add("mBrand", [fi.marque, fi.type].filter(Boolean).join(" ")); add("mGenre", fi.genre);
-  add("mCarac", [fi.annee && (S.lang === "nl" ? "bouwjaar " : "année ") + fi.annee, fi.charge, fi.vitesse, fi.personnes, fi.arrets && fi.arrets + (S.lang === "nl" ? " stopplaatsen" : " arrêts")].filter(Boolean).join(" · ")); add("mDev", m.appareil); add("mDrive", driveLabel(a, S.lang)); add("mConcl", m.conclusion); add("mNext", m.prochain); add("mAR", m.analyse); add("mExam", m.examen); add("mEntretien", m.entretien); add("mNextAR", m.prochaineAR);
-  if (m.incomplet) it.push(`<span class="pill crit">${esc(m.incomplet)}</span>`);
-  if (m.echeance) it.push(`<span class="${m.echeanceDepassee ? "pill crit" : ""}">${esc(L.mEcheance)} : <b>${esc(m.echeance)}</b>${m.echeanceDepassee ? " — " + esc(L.mDepassee) : ""}</span>`);
-  if (a.fichier) it.push(`<span class="muted">${esc(a.fichier)}${a.analyseLe ? " · " + esc(fmtDate(a.analyseLe)) : ""}</span>`);
-  $("#meta").innerHTML = it.join("");
+function renderMeta(){ renderFicheApp(); renderSituation(); }
+function setDD(id, v, extraHtml){ const el = $("#" + id), L = T[S.lang]; if (v) { el.classList.remove("is-missing"); el.innerHTML = esc(v) + (extraHtml || ""); } else { el.classList.add("is-missing"); el.textContent = L.notFound; } }
+function renderFicheApp(){
+  const a = curApp(), m = a.meta || {}, fi = m.fiche || {};
+  setDD("fa-nom", a.nom || fi.nomApp || fi.batiment); setDD("fa-num", a.numero || fi.fab || m.appareil); setDD("fa-marque", [fi.marque, fi.type].filter(Boolean).join(" "));
+  setDD("fa-genre", fi.genre); setDD("fa-annee", fi.annee); setDD("fa-charge", [fi.charge, fi.personnes].filter(Boolean).join(" · ")); setDD("fa-vitesse", fi.vitesse);
+  setDD("fa-arrets", fi.arrets); setDD("fa-drive", driveLabel(a, S.lang)); setDD("fa-entretien", m.entretien || fi.entretien); setDD("fa-ce", fi.ce);
+}
+function renderSituation(){
+  const L = T[S.lang], a = curApp(), m = a.meta || {}, s = sectOf(a), fi = m.fiche || {};
+  $("#sr-banner").className = "sr-banner sect-" + s.grp;
+  $("#sr-letter").textContent = s.letter; $("#sr-word").textContent = L.sect[s.grp]; $("#sr-explain").textContent = L.sectExplain[s.grp] + (m.echeanceDepassee ? " " + L.mEcheance + " " + m.echeance + " — " + L.mDepassee + "." : "");
+  $("#sr-letter-edit").value = m.conclusion || "";
+  setDD("sr-org", [m.organisme, fi.contactOrg && `(${L.contactOrg} : ${fi.contactOrg})`].filter(Boolean).join(" ")); setDD("sr-type", fi.typeRapport ? L.rapType[fi.typeRapport] : "");
+  setDD("sr-date", [m.date_rapport, m.examen && m.examen !== m.date_rapport ? `(${L.mExam.toLowerCase()} ${m.examen})` : ""].filter(Boolean).join(" "));
+  setDD("sr-next", m.prochain); setDD("sr-ar", m.analyse); setDD("sr-next-ar", m.prochaineAR);
+  setDD("sr-echeance", m.echeance, m.echeanceDepassee ? ` <span class="pill crit">${esc(L.mDepassee)}</span>` : "");
+  setDD("sr-file", a.fichier ? a.fichier + (a.analyseLe ? " · " + fmtDate(a.analyseLe) : "") : "");
+  const inc = $("#sr-incomplet"); inc.textContent = m.incomplet || ""; inc.classList.toggle("hidden", !m.incomplet);
 }
 function renderTiles(){
   const L = T[S.lang], a = curApp(), rows = a.rows, rem = rows.filter(r => r.statut === "remedier").length;
   const known = rows.filter(r => r.source !== "none").length, alerts = rows.filter(r => checksFor(r, a).length).length;
   let chk = L.checkNA, cls = "acc";
   if (a.check) { const ok = a.check.count === rem && !a.check.missing.length; chk = ok ? L.checkDone : L.checkGap; cls = ok ? "ok" : "crit"; }
-  $("#tiles").innerHTML = [["crit", rem, L.tRem], ["acc", rows.length, L.tRows], ["ok", `${known}/${rows.length}`, L.tKnown], [alerts ? "warn" : "ok", alerts, L.tAlerts], [cls, chk, L.tCheck]]
+  $("#tiles").innerHTML = [["sect-" + sectOf(a).grp, rem, L.tRem], ["acc", rows.length, L.tRows], ["ok", `${known}/${rows.length}`, L.tKnown], [alerts ? "warn" : "ok", alerts, L.tAlerts], [cls, chk, L.tCheck]]
     .map(([c, v, l]) => `<div class="tile ${c}"><b class="${/^[\d/]+$/.test(String(v)) ? "" : "txt"}">${esc(v)}</b><span>${esc(l)}</span></div>`).join("");
   const box = $("#check-box");
   if (a.check) {
@@ -21654,13 +21959,17 @@ function visibleRows(){
 function renderTable(){
   const L = T[S.lang], a = curApp(), rows = visibleRows(), lang = a.outLang || S.lang;
   if (!rows.length) { $("#tbody").innerHTML = `<tr class="empty-row"><td colspan="10">—</td></tr>`; return; }
-  $("#tbody").innerHTML = rows.map(r => {
-    const i = a.rows.indexOf(r) + 1, c = S.E.codes.get(r.code), chks = checksFor(r, a), ck = r.confiance;
+  const grouped = !($("#t-order") && $("#t-order").checked), list = sortedRows(a, rows), sg = sectOf(a).grp;
+  let lastP = 0;
+  $("#tbody").innerHTML = list.map(r => {
+    const i = a.rows.indexOf(r) + 1, c = S.E.codes.get(r.code), chks = checksFor(r, a), ck = r.confiance, p = prioOf(r, a);
+    let head = "";
+    if (grouped && p !== lastP) { lastP = p; head = `<tr class="grp grp-${p}"><th colspan="10" scope="colgroup"><span class="prio prio-${p}">P${p}</span> ${esc(L["p" + p])} (${list.filter(x => prioOf(x, a) === p).length})</th></tr>`; }
     const opts = ["remedier","surveiller","info"].map(s => `<option value="${s}"${r.statut === s ? " selected" : ""}>${esc(L.st[s])}</option>`).join("");
     const alts = r.alts.filter(x => x !== r.code && S.E.codes.has(x));
-    return `<tr data-id="${esc(r.id)}" class="${esc(r.statut)}${r.include ? "" : " excluded"}">
+    return head + `<tr data-id="${esc(r.id)}" class="${esc(r.statut)} rp-${p} sect-${sg}${r.include ? "" : " excluded"}">
       <td><input type="checkbox" class="incl" aria-label="${esc(L.cIncl)} ${i}" ${r.include ? "checked" : ""}></td>
-      <td class="num">${i}</td>
+      <td class="num"><span class="prio prio-${p}" title="${esc(L["p" + p])}">P${p}</span><span class="num-orig">${i}</span></td>
       <td><span class="ref" contenteditable="true" data-f="ref" spellcheck="false">${esc(r.ref)}</span>${r.page !== "" ? `<span class="page">p. ${esc(r.page)}</span>` : ""}<span class="zone">${esc(ZONES[S.lang][r.zone] || "—")}</span></td>
       <td><select class="statut" aria-label="${esc(L.cStatus)} ${i}">${opts}</select></td>
       <td><div class="orig ed" contenteditable="true" data-f="texte">${esc(r.texte)}</div>${r.mesure ? `<span class="mesure">${esc(r.mesure)}</span>` : ""}</td>
@@ -21693,7 +22002,7 @@ function renderRecap(){
 function renderDossier(){
   if (!S.dossier) return;
   $("#example-flag").classList.toggle("hidden", !S.dossier.exemple);
-  renderApps(); fillAppForm(); renderMeta(); renderTiles(); renderTable(); renderNotCovered(); renderRecap(); refreshBtn();
+  renderClient(); renderApps(); fillAppForm(); renderMeta(); renderTiles(); renderTable(); renderNotCovered(); renderRecap(); refreshBtn();
 }
 const rowById = id => curApp().rows.find(r => r.id === id);
 const refreshBtn = () => { $("#analyze").disabled = !S.file && !$("#paste").value.trim(); };
@@ -21733,9 +22042,7 @@ async function analyzeInner(){
   S.undo = previous ? {appId:a.id, data:previous} : null;
   // Remplissage automatique depuis le rapport (sans écraser ce que l'utilisateur a saisi)
   const fi = res.meta.fiche || {}, D = S.dossier;
-  if (!D.nom && fi.acp) D.nom = fi.acp;
-  if (!D.client && fi.syndic) D.client = fi.syndic;
-  if (!D.adresse && fi.lieu) D.adresse = fi.lieu;
+  const otherClient = clientFromReport(D, fi, res.meta);
   if (!a.numero && res.meta.appareil) a.numero = res.meta.appareil;
   if (!a.nom && (fi.nomApp || fi.batiment)) a.nom = titleCase(fi.nomApp || fi.batiment).slice(0, 60);
   if (fi.drive && fi.drive !== "hydro" && !a.driveManuel) a.entrainement = fi.drive;
@@ -21743,7 +22050,7 @@ async function analyzeInner(){
   fillDossierForm();
   if (!S.dossier.nom && !a.nom && res.meta.appareil) a.nom = "";
   renderDossier(); persist();
-  showMsg((res.rows.some(r => r.statut === "remedier") || !res.meta.sansRemarque ? L.done(res.rows.length) : L.noRemark(res.meta.conclusion)) + "\n" + diag, "info");
+  showMsg((res.rows.some(r => r.statut === "remedier") || !res.meta.sansRemarque ? L.done(res.rows.length) : L.noRemark(res.meta.conclusion)) + "\n" + diag + (otherClient ? "\n" + L.otherClient(otherClient, D.client.acp) : ""), otherClient ? "warn" : "info");
   if (previous) $("#msg").insertAdjacentHTML("beforeend", ` <button id="undo-analyse" class="btn ghost" type="button">${esc(L.undoAnalyse)}</button>`);
   $("#tiles").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
 }
@@ -21790,7 +22097,11 @@ function bindDossier(){
   $("#learn-all").addEventListener("click", async () => { let n = 0; for (const r of curApp().rows) { const c = S.E.codes.get(r.code); if (r.code && r.texte && (r.edited || r.confiance === "certain") && (!S.E.codes.size || (c && c.actif))) { if (await learn(r)) n++; } } leaveExample(); persist(); renderDossier(); renderRefBadges(); toast(L().learnedAll(n)); });
 
   // champs dossier / appareil
-  [["#d-nom","nom"],["#d-adresse","adresse"],["#d-client","client"],["#d-offre","refOffre"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { S.dossier[f] = e.target.value; leaveExample(); persist(); }));
+  [["#d-nom","nom"],["#d-offre","refOffre"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { S.dossier[f] = e.target.value; if (f === "nom") S.dossier.nomAuto = false; leaveExample(); persist(); $("#cl-titre").textContent = S.dossier.nom || T[S.lang].untitled; }));
+  CL_FIELDS.forEach(([id, k]) => $("#" + id).addEventListener("input", e => { const d = ensureClient(S.dossier); d.client[k] = e.target.value; d.clientSrc[k] = e.target.value ? "saisie" : "vide"; leaveExample(); persist(); }));
+  CL_FIELDS.forEach(([id]) => $("#" + id).addEventListener("change", () => renderClient()));
+  $("#sr-letter-edit").addEventListener("change", e => { const a = curApp(); a.meta = a.meta || {}; a.meta.conclusion = e.target.value; a.meta.conclusionManuelle = true; leaveExample(); persist(); renderDossier(); });
+  $("#t-order").addEventListener("change", renderTable);
   [["#a-nom","nom"],["#a-num","numero"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { curApp()[f] = e.target.value; leaveExample(); persist(); renderApps(); }));
   $("#drive").addEventListener("change", e => { curApp().entrainement = e.target.value; curApp().driveManuel = e.target.value !== "auto"; persist(); renderDossier(); });
   $("#outlang").addEventListener("change", e => { curApp().outLang = e.target.value; persist(); renderTable(); renderRecap(); });
@@ -21828,7 +22139,10 @@ function scopeApps(){ const all = S.dossier.appareils.map((a, i) => ({a, i})); r
 function docLang(){ return curApp().outLang || S.lang; }
 function infoLines(lang){
   const L = T[lang], d = S.dossier, out = [];
-  if (d.nom) out.push([L.dNom, d.nom]); if (d.adresse) out.push([L.dAdresse, d.adresse]); if (d.client) out.push([L.dClient, d.client]); if (d.refOffre) out.push([L.dOffre, d.refOffre]);
+  const c = ensureClient(d).client;
+  if (d.nom) out.push([L.dNom, d.nom]); if (c.acp && c.acp !== d.nom) out.push([L.clAcp, c.acp]); if (c.immRue || c.immCp) out.push([L.clImmRue, [c.immRue, c.immCp].filter(Boolean).join(", ")]);
+  if (c.syndic) out.push([L.clSyndic, [c.syndic, c.contact].filter(Boolean).join(" — ")]); if (c.syndicAdr) out.push([L.clSyndicAdr, c.syndicAdr]); if (c.tel) out.push([L.clTel, c.tel]); if (c.email) out.push([L.clEmail, c.email]);
+  if (c.refRapport) out.push([L.clRefRapport, c.refRapport]); if (c.refClient) out.push([L.clRefClient, c.refClient]); if (d.refOffre) out.push([L.dOffre, d.refOffre]);
   return out;
 }
 function appInfo(a, lang){
@@ -21861,13 +22175,21 @@ async function exportDocx(){
   const P = (text, o = {}) => new D.Paragraph({spacing:{after:100, before:o.before || 0}, keepNext:!!o.keepNext, children:[new D.TextRun({text, font:"Arial", size:o.size || 20, bold:!!o.bold, color:o.color})]});
   const table = (heads, widths, bodyRows) => new D.Table({width:{size:widths.reduce((x, y) => x + y, 0), type:D.WidthType.DXA}, columnWidths:widths, layout:D.TableLayoutType.FIXED,
     rows:[new D.TableRow({tableHeader:true, children:heads.map((h, i) => cell(h, widths[i], {head:true}))}), ...bodyRows]});
+  const SC = {ok:["2E6B3A","E5F2E7"], b:["E8610A","FDEBDD"], stop:["B3261E","FBE9E7"], nc:["5B6672","ECEEF0"]};
+  const banner = s => { const c = SC[s.grp]; if (!c) return P(`${L.sectConcl} : ${L.sect.none}`, {size:18, color:"5B6672"});
+    return new D.Table({width:{size:15000, type:D.WidthType.DXA}, columnWidths:[900, 14100], layout:D.TableLayoutType.FIXED, rows:[new D.TableRow({cantSplit:true, children:[
+      new D.TableCell({width:{size:900, type:D.WidthType.DXA}, shading:{fill:c[0], type:D.ShadingType.CLEAR, color:"auto"}, verticalAlign:D.VerticalAlign.CENTER, children:[new D.Paragraph({alignment:D.AlignmentType.CENTER, children:[new D.TextRun({text:s.letter, bold:true, size:32, color:"FFFFFF", font:"Arial"})]})]}),
+      new D.TableCell({width:{size:14100, type:D.WidthType.DXA}, shading:{fill:c[1], type:D.ShadingType.CLEAR, color:"auto"}, margins:{top:60, bottom:60, left:120, right:120}, children:[new D.Paragraph({children:[new D.TextRun({text:`${L.sectConcl} ${s.letter} — ${L.sect[s.grp]}`, bold:true, size:20, color:c[0], font:"Arial"})]}), new D.Paragraph({children:[new D.TextRun({text:L.sectExplain[s.grp], size:17, font:"Arial"})]})]})]})]}); };
   const children = [P(L.docTitle, {size:30, bold:true, color:ORANGE}), ...infoLines(lang).map(([k, v]) => P(`${k} : ${v}`))];
+  if (apps.length > 1) { const w = dossierSect({appareils: apps.map(x => x.a)}); children.push(P(`${L.clWorst} : ${w.letter} — ${L.sect[w.grp]}`, {bold:true, color:(SC[w.grp] || ["5B6672"])[0]})); }
   apps.forEach(({a, i}) => {
-    const rows = a.rows.filter(r => r.include);
+    const rows = sortedRows(a, a.rows.filter(r => r.include));
     if (apps.length > 1 || a.nom || a.numero) children.push(P(appName(a, i), {size:24, bold:true, color:BLUE, before:240, keepNext:true}));
     const info = appInfo(a, lang); if (info) children.push(P(info, {size:18, keepNext:true}));
+    children.push(banner(sectOf(a)), P("", {size:8}));
     const cl = checkLine(a, lang); if (cl) children.push(P(cl, {size:17, keepNext:true}));
-    children.push(table(L.w, W, rows.length ? rows.map((r, k) => new D.TableRow({cantSplit:true, children:wRow(r, k, a, lang).map((v, c) => cell(v, W[c], {fill: c === 7 && r.statut === "remedier" ? "FBE3D3" : undefined, bold:c === 6, color: c === 6 && !r.code ? "B3261E" : undefined}))}))
+    children.push(table(L.w, W, rows.length ? rows.map((r, k) => { const p = prioOf(r, a), w = wRow(r, a.rows.indexOf(r), a, lang); w[7] = `P${p} – ${w[7]}`;
+      return new D.TableRow({cantSplit:true, children:w.map((v, c) => cell(v, W[c], {fill: c === 7 ? (p === 1 ? "FBE9E7" : p === 2 ? "FDEBDD" : undefined) : undefined, bold:c === 6 || (c === 7 && p === 1), color: (c === 6 && !r.code) || (c === 7 && p === 1) ? "B3261E" : undefined}))}); })
       : [new D.TableRow({children:W.map((w, c) => cell(c === 3 ? "—" : "", w))})]));
     const nc = a.rows.filter(r => r.statut === "remedier" && !r.include);
     if (nc.length) { children.push(P("", {}), P(L.docNotCovered, {bold:true, color:ORANGE, keepNext:true})); nc.forEach(r => children.push(P(`${r.ref || "—"} : ${r.texte}`, {size:18}))); }
@@ -22248,18 +22570,22 @@ function openUserDialog(){
 async function renderDossiers(){
   const L = T[S.lang], q = norm($("#ds-search").value);
   const all = (await DB.dossiers()).sort((a, b) => String(b.modifieLe).localeCompare(String(a.modifieLe)));
-  const list = all.filter(d => !q || norm([d.nom, d.adresse, d.client, d.refOffre, ...d.appareils.map(a => a.nom + " " + a.numero)].join(" ")).includes(q));
+  all.forEach(ensureClient);
+  const list = all.filter(d => !q || norm([d.nom, d.refOffre, ...Object.values(d.client), ...d.appareils.map(a => a.nom + " " + a.numero)].join(" ")).includes(q));
   $("#ds-list").innerHTML = list.length ? list.map(d => { const rem = d.appareils.reduce((n, a) => n + a.rows.filter(r => r.statut === "remedier").length, 0);
-    return `<div class="card"><div><h3>${esc(d.nom || L.untitled)}</h3><small>${esc([d.adresse, d.client].filter(Boolean).join(" · "))}${d.adresse || d.client ? " · " : ""}${esc(L.dsApps(d.appareils.length))} · ${esc(L.dsRem(rem))} · ${esc(L.dsModified(fmtDate(d.modifieLe)))}</small></div>
+    const ws = dossierSect(d), sub = [[d.client.immRue, d.client.immCp].filter(Boolean).join(", "), d.client.syndic].filter(Boolean).join(" · ");
+    return `<div class="card sect-${ws.grp}"><div><h3><span class="sect-badge sect-${ws.grp}"><b>${esc(ws.letter)}</b><span>${esc(L.sect[ws.grp])}</span></span> ${esc(d.nom || L.untitled)}</h3><small>${esc(sub)}${sub ? " · " : ""}${esc(L.dsApps(d.appareils.length))} · ${esc(L.dsRem(rem))} · ${esc(L.dsModified(fmtDate(d.modifieLe)))}</small></div>
       <div class="actions"><button class="btn primary" type="button" data-dopen="${esc(d.id)}">${esc(L.dsOpen)}</button><button class="btn ghost" type="button" data-ddup="${esc(d.id)}">${esc(L.dsDup)}</button><button class="btn ghost" type="button" data-dexp="${esc(d.id)}">${esc(L.dSaveFile)}</button><button class="btn ghost" type="button" data-ddel="${esc(d.id)}">${esc(L.dsDel)}</button></div></div>`; }).join("")
     : `<p class="muted">${esc(L.dsEmpty)}</p>`;
 }
 function validDossier(d){ return d && d.type === DOSSIER_TYPE && Array.isArray(d.appareils) && d.appareils.length; }
 function sanitizeDossier(d){
+  ensureClient(d);
+  if (d.client) Object.keys(d.client).forEach(k => d.client[k] = String(d.client[k] ?? "").slice(0, 300));
   if (typeof d.id !== "string" || !/^[a-z0-9]{6,40}$/i.test(d.id)) d.id = uid();
-  ["nom","adresse","client","refOffre","auteur"].forEach(k => d[k] = String(d[k] ?? ""));
+  ["nom","refOffre","auteur"].forEach(k => d[k] = String(d[k] ?? ""));
   d.appareils = d.appareils.filter(a => a && typeof a === "object"); if (!d.appareils.length) d.appareils = [newApp()];
-  d.appareils.forEach(a => { ["nom","numero","fichier"].forEach(k => a[k] = String(a[k] ?? "")); if (!["auto","traction","hydro-direct","hydro-indirect"].includes(a.entrainement)) a.entrainement = "auto"; a.id = uid(); a.rows = (Array.isArray(a.rows) ? a.rows : []).map(r => mkRow(r)); a.meta = a.meta && typeof a.meta === "object" ? Object.fromEntries(Object.entries(a.meta).map(([k, v]) => [k, String(v ?? "")])) : {}; a.check = a.check && typeof a.check === "object" ? {count:+a.check.count || 0, missing:Array.isArray(a.check.missing) ? a.check.missing.map(String) : [], annonce:String(a.check.annonce || "")} : null; });
+  d.appareils.forEach(a => { ["nom","numero","fichier"].forEach(k => a[k] = String(a[k] ?? "")); if (!["auto","traction","hydro-direct","hydro-indirect"].includes(a.entrainement)) a.entrainement = "auto"; a.id = uid(); a.rows = (Array.isArray(a.rows) ? a.rows : []).map(r => mkRow(r)); const flat = o => Object.fromEntries(Object.entries(o).filter(([, v]) => v === null || typeof v !== "object").map(([k, v]) => [k, String(v ?? "")])); a.meta = a.meta && typeof a.meta === "object" ? {...flat(a.meta), ...(a.meta.fiche && typeof a.meta.fiche === "object" ? {fiche: flat(a.meta.fiche)} : {})} : {}; a.check = a.check && typeof a.check === "object" ? {count:+a.check.count || 0, missing:Array.isArray(a.check.missing) ? a.check.missing.map(String) : [], annonce:String(a.check.annonce || "")} : null; });
   return d;
 }
 function sanitizeKeepId(d){ const id = d.id; sanitizeDossier(d); if (typeof id === "string" && /^[a-z0-9]{6,40}$/i.test(id)) d.id = id; return d; }
