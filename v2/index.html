@@ -20710,6 +20710,8 @@ var __async = (__this, __arguments, generator) => {
 /* Base de connaissances intégrée — v2 (23/11/2026) : v1 + audit expert (56 corrections, 16 thèmes ajoutés)
    Format : [id, zone, code, confiance, motsClésFR, motsClésNL, explicationFR, solutionFR, explicationNL, oplossingNL] */
 const KB_THEMES = [
+["bruit_anormal","GEN","DR2247","probable","bruit anormal;bruits anormaux;bruit suspect;fait du bruit;fait un bruit;bruit en passant;grincement;claquement","abnormaal geluid;abnormaal lawaai;vreemd geluid;maakt lawaai;maakt geluid;piepen;klapperen","Un bruit anormal signale une usure ou un déréglage (coulisseaux ou roues de guidage, poulies, portes, machine). La cause doit être diagnostiquée avant de chiffrer une réparation.","Intervention d'un technicien pour diagnostiquer l'origine du bruit (DR2247), puis remplacement ou réglage de la pièce en cause sur devis (ex. DR8110 coulisseaux, DR8112 roues de guidage).","Een abnormaal geluid wijst op slijtage of ontregeling (geleiders of geleiderollen, schijven, deuren, machine). De oorzaak moet eerst gediagnosticeerd worden.","Tussenkomst van een technieker om de oorzaak van het geluid te bepalen (DR2247), daarna vervanging of afstelling van het betrokken onderdeel op offerte (bv. DR8110 glijschoenen, DR8112 geleiderollen)."],
+["contact_echelle","CUV","DR2247","probable","contact echelle en cuvette;contact echelle;contact de l'echelle;est sensible;contact d'echelle;contact de securite de l'echelle","contact ladder;laddercontact;contact van de ladder","Le contact de sécurité de l'échelle de cuvette est trop sensible : il peut couper l'ascenseur sans raison et provoquer des pannes.","Réglage ou remplacement du contact de l'échelle par le technicien d'entretien (DR2247 assistance technique). L'échelle elle-même n'est pas à remplacer.","Het veiligheidscontact van de putladder is te gevoelig: het kan de lift zonder reden stilleggen.","Afstelling of vervanging van het laddercontact door de onderhoudstechnieker (DR2247 technische bijstand). De ladder zelf hoeft niet vervangen te worden."],
 ["tel24","TEL","DR0000","certain","liaison phonique;telephonie bidirectionnelle;communication bidirectionnelle;service d'intervention;service 24;24h/24;24 h sur 24;centre d'appel;teleassistance;appel de secours","tweerichtingscommunicatie;tweewegcommunicatie;spreek- en luisterverbinding;24-uursdienst;permanente dienst;hulpdienst;interventiedienst;noodoproep","Une personne bloquée en cabine (ou un technicien sur le toit de cabine) doit pouvoir joindre à tout moment un service d'intervention disponible 24h/24 par une liaison phonique bidirectionnelle. C'est une remarque GOA.","Installer ou compléter la liaison phonique bidirectionnelle (cabine et/ou toit de cabine) raccordée à un centre d'appel 24h/24. Intitulé d'offre : celui de la règle GOA du référentiel.","Een opgesloten persoon in de kooi (of een technieker op het kooidak) moet op elk moment een 24-uursinterventiedienst kunnen bereiken via een tweerichtingsspraakverbinding. Dit is een GOA-opmerking.","De tweerichtingsspraakverbinding (kooi en/of kooidak) plaatsen of vervolledigen, aangesloten op een 24u-oproepcentrale. Offerteomschrijving: die van de GOA-regel in de referentie."],
 ["interphonie","TEL","DR6306","certain","interphonie;intercom;salle des machines et la cabine;machinerie et la cabine;communication entre la salle des machines","intercom;machinekamer en de kooi;machinekamer en kooi;communicatie tussen machinekamer","Le technicien qui effectue une manœuvre de secours en salle des machines doit pouvoir communiquer avec la cabine.","Installer une interphonie entre la salle des machines (poste de manœuvre de secours) et la cabine.","De technieker die vanuit de machinekamer een noodmanoeuvre uitvoert, moet met de kooi kunnen communiceren.","Een intercom plaatsen tussen de machinekamer (noodbedieningspost) en de kooi."],
 ["zone_deverr","CAB","DR0801","certain","zone de deverrouillage;zone de deblocage;indication de la position de la cabine;voyant de zone;zone de porte","ontgrendelingszone;ontgrendelzone;aanduiding van de kooipositie;deurzone;verklikkerlamp ontgrendelingszone","Lors d'une évacuation, le sauveteur doit savoir que la cabine se trouve dans la zone de déverrouillage avant d'ouvrir les portes, sinon risque de chute dans la gaine.","Installer une détection de zone de porte avec voyant visible depuis le poste de manœuvre de secours.","Bij een evacuatie moet de redder weten dat de kooi zich in de ontgrendelingszone bevindt voor hij de deuren opent, anders valgevaar in de schacht.","Een deurzonedetectie met verklikker plaatsen, zichtbaar vanaf de noodbedieningspost."],
@@ -20819,7 +20821,7 @@ fr:{
  title:"Application Ascenseur Control", subtitle:"Analyse de risques ou rapport de visite → tableau des remarques, solutions et codes Orona", offline:"Sans internet ni IA",
  navDossier:"Dossier en cours", navDossiers:"Mes dossiers", navRef:"Référentiel des codes", navAide:"Mode d'emploi",
  dossierTitle:"Dossier", dNew:"+ Nouveau dossier", dSaveFile:"Sauvegarder le dossier (fichier)",
- dNom:"Nom du dossier", dNomPh:"ex. ACP Waterloo 517", dAdresse:"Adresse", dClient:"Client / syndic", dOffre:"Réf. offre",
+ dNom:"Nom du dossier", dNomPh:"ex. ACP Waterloo 517", dAdresse:"Adresse", dClient:"Syndic / gestionnaire (c/o)", dOffre:"Réf. offre",
  appsTitle:"Appareils du dossier", aAdd:"+ Appareil", aDup:"Dupliquer l'appareil", aDel:"Supprimer l'appareil",
  aNom:"Nom de l'appareil", aNomPh:"ex. Bloc A, Ascenseur 1", aNum:"N° appareil", appDefault:n=>`Appareil ${n}`,
  confirmDelApp:"Supprimer cet appareil et son tableau ? Cliquez à nouveau pour confirmer.", lastApp:"Un dossier garde au moins un appareil.",
@@ -20842,7 +20844,7 @@ fr:{
  checkBad:(a,b)=>`Recomptage indépendant du texte : ${a} marque(s) « à remédier » trouvée(s), ${b} ligne(s) à remédier dans le tableau. Écart à vérifier.`,
  announced:n=>`Le rapport annonce ${n} remarque(s).`, missing:"Références marquées à remédier absentes du tableau :",
  checkNA:"—", checkDone:"OK", checkGap:"Écart",
- mOrg:"Organisme", mConcl:"Conclusion SECT", mNext:"Prochain contrôle", mNextAR:"Prochaine analyse de risques avant", mExam:"Examen du", mEntretien:"Entretien", incomplete:(p,pa,d,da)=>`⚠ Rapport incomplet : ${pa ? p + " page(s) reçue(s) sur " + pa : ""}${pa && da ? ", " : ""}${da ? (d || 1) + " ascenseur(s) décrit(s) sur " + da + " annoncé(s)" : ""}. Demandez le rapport complet.`, staleTable:f=>`⚠ Le tableau affiché plus bas est celui de l'analyse précédente (${f}), pas de ce rapport.`, mAR:"Analyse de risques du", mEcheance:"Attestation de régularisation attendue avant", mDepassee:"échéance dépassée", mDate:"Date du rapport", mDev:"Appareil", mDrive:"Entraînement",
+ mOrg:"Organisme", mConcl:"Conclusion SECT", mNext:"Prochain contrôle", mNextAR:"Prochaine analyse de risques avant", mExam:"Examen du", mBrand:"Ascenseur", toConfirm:"à confirmer", noRemark:c=>`Rapport sans remarque à remédier${c ? " (conclusion " + c + ")" : ""} : rien à chiffrer pour cet appareil. Les informations de l'appareil ont été reprises.`, linkedInf:d=>`Lié à l'infraction : l'échéance du ${d} est dépassée, le SECT annonce une conclusion négative au prochain contrôle. À traiter en priorité avec l'infraction.`, mGenre:"Genre", mCarac:"Caractéristiques", mEntretien:"Entretien", incomplete:(p,pa,d,da)=>`⚠ Rapport partiel : ${pa ? p + " page(s) sur " + pa : ""}${pa && da ? ", " : ""}${da ? (d || 1) + " ascenseur(s) décrit(s) sur " + da + " annoncé(s)" : ""}. Les autres ascenseurs sont dans d'autres pages ou fichiers : analysez-les comme appareils séparés du même dossier.`, staleTable:f=>`⚠ Le tableau affiché plus bas est celui de l'analyse précédente (${f}), pas de ce rapport.`, mAR:"Analyse de risques du", mEcheance:"Attestation de régularisation attendue avant", mDepassee:"échéance dépassée", mDate:"Date du rapport", mDev:"Appareil", mDrive:"Entraînement",
  noCode:"Point d'alerte : code non trouvé.", unknownCode:c=>`Code ${c} absent du référentiel.`, inactiveCode:c=>`Code ${c} désactivé dans le référentiel.`, pendingCode:c=>`Code ${c} : modification proposée, pas encore validée par le référent.`,
  statusGuess:"Statut non indiqué clairement dans le rapport : à vérifier.",
  sameRefOtherText:"Même référence qu'une remarque validée, mais texte différent : vérifier.",
@@ -20916,7 +20918,7 @@ nl:{
  title:"Application Ascenseur Control", subtitle:"Risicoanalyse of keuringsverslag → tabel met opmerkingen, oplossingen en Orona-codes", offline:"Zonder internet en zonder AI",
  navDossier:"Huidig dossier", navDossiers:"Mijn dossiers", navRef:"Codereferentie", navAide:"Handleiding",
  dossierTitle:"Dossier", dNew:"+ Nieuw dossier", dSaveFile:"Dossier opslaan (bestand)",
- dNom:"Dossiernaam", dNomPh:"bv. VME Honas", dAdresse:"Adres", dClient:"Klant / syndicus", dOffre:"Ref. offerte",
+ dNom:"Dossiernaam", dNomPh:"bv. VME Honas", dAdresse:"Adres", dClient:"Syndicus / beheerder (c/o)", dOffre:"Ref. offerte",
  appsTitle:"Toestellen in het dossier", aAdd:"+ Toestel", aDup:"Toestel dupliceren", aDel:"Toestel verwijderen",
  aNom:"Naam van het toestel", aNomPh:"bv. Blok A, Lift 1", aNum:"Toestelnr.", appDefault:n=>`Toestel ${n}`,
  confirmDelApp:"Dit toestel en zijn tabel verwijderen? Klik nogmaals om te bevestigen.", lastApp:"Een dossier houdt minstens één toestel.",
@@ -20939,7 +20941,7 @@ nl:{
  checkBad:(a,b)=>`Onafhankelijke hertelling van de tekst: ${a} markering(en) « te verhelpen » gevonden, ${b} te verhelpen regel(s) in de tabel. Verschil na te kijken.`,
  announced:n=>`Het verslag vermeldt ${n} opmerking(en).`, missing:"Referenties gemarkeerd als te verhelpen die ontbreken in de tabel:",
  checkNA:"—", checkDone:"OK", checkGap:"Verschil",
- mOrg:"Keuringsorganisme", mConcl:"Conclusie EDTC", mNext:"Volgende keuring", mNextAR:"Volgende risicoanalyse vóór", mExam:"Onderzoek van", mEntretien:"Onderhoud", incomplete:(p,pa,d,da)=>`⚠ Onvolledig verslag: ${pa ? p + " pagina('s) ontvangen van " + pa : ""}${pa && da ? ", " : ""}${da ? (d || 1) + " lift(en) beschreven van " + da + " aangekondigd" : ""}. Vraag het volledige verslag.`, staleTable:f=>`⚠ De tabel hieronder is die van de vorige analyse (${f}), niet van dit verslag.`, mAR:"Risicoanalyse van", mEcheance:"Regularisatieattest verwacht vóór", mDepassee:"termijn verstreken", mDate:"Datum verslag", mDev:"Toestel", mDrive:"Aandrijving",
+ mOrg:"Keuringsorganisme", mConcl:"Conclusie EDTC", mNext:"Volgende keuring", mNextAR:"Volgende risicoanalyse vóór", mExam:"Onderzoek van", mBrand:"Lift", toConfirm:"te bevestigen", noRemark:c=>`Verslag zonder te verhelpen opmerkingen${c ? " (conclusie " + c + ")" : ""}: niets te prijzen voor dit toestel. De gegevens van het toestel zijn overgenomen.`, linkedInf:d=>`Verbonden met de inbreuk: de termijn van ${d} is verstreken, de EDTC kondigt een negatieve conclusie aan bij de volgende keuring. Prioritair te behandelen.`, mGenre:"Soort", mCarac:"Kenmerken", mEntretien:"Onderhoud", incomplete:(p,pa,d,da)=>`⚠ Gedeeltelijk verslag: ${pa ? p + " pagina('s) van " + pa : ""}${pa && da ? ", " : ""}${da ? (d || 1) + " lift(en) beschreven van " + da + " aangekondigd" : ""}. De andere liften staan op andere pagina's of in andere bestanden: analyseer ze als aparte toestellen in hetzelfde dossier.`, staleTable:f=>`⚠ De tabel hieronder is die van de vorige analyse (${f}), niet van dit verslag.`, mAR:"Risicoanalyse van", mEcheance:"Regularisatieattest verwacht vóór", mDepassee:"termijn verstreken", mDate:"Datum verslag", mDev:"Toestel", mDrive:"Aandrijving",
  noCode:"Waarschuwing: code niet gevonden.", unknownCode:c=>`Code ${c} staat niet in de referentie.`, inactiveCode:c=>`Code ${c} is gedeactiveerd in de referentie.`, pendingCode:c=>`Code ${c}: wijziging voorgesteld, nog niet gevalideerd door de referent.`,
  statusGuess:"Status niet duidelijk vermeld in het verslag: na te kijken.",
  sameRefOtherText:"Zelfde referentie als een gevalideerde opmerking, maar andere tekst: nakijken.",
@@ -21008,7 +21010,7 @@ nl:{
 
 "use strict";
 /* ===================== Outils généraux ===================== */
-const APP_VERSION = "2.0.4 — 25/11/2026"; window.AC_VERSION = APP_VERSION;
+const APP_VERSION = "2.0.5 — 26/11/2026"; window.AC_VERSION = APP_VERSION;
 const REF_TYPE = "referentiel-ascenseur-control", PROPS_TYPE = "propositions-ascenseur-control", DOSSIER_TYPE = "dossier-ascenseur-control";
 /* L'intitulé d'offre GOA (avec prix) n'est PAS dans le code source : il vient du référentiel interne (règle 2i/104). */
 const GOA_INTITULE = typeof INITIAL_GOA_INTITULE !== "undefined" ? INITIAL_GOA_INTITULE : "";
@@ -21308,6 +21310,7 @@ function splitSections(lines, lang){
     if (cur && cur.body.length < 1400) { cur.raw += "\n" + t; cur.body += " " + t; }
   }
   close();
+  for (let i = blocks.length - 1; i >= 0; i--) if (blocks[i].kind === "note" && /envoye par e-?mail|verzonden per e-?mail|copie de ce rapport|kopie van dit verslag/.test(norm(blocks[i].body))) blocks.splice(i, 1);
   const info = lines.find(l => /^\s*info\s+(btv|vincotte|organisme|sect|edtc|ocb|sgs|konhef)\b/i.test(l.t));
   if (blocks.length && info) blocks.push({kind:"info", n:"", dev:"", raw:info.t, body:info.t.replace(/^\s*info\s+\S+[\s:]*/i, "").replace(/:\s*$/, ""), page:info.p});
   const lbl = {inf: lang === "nl" ? "Inbr." : "Infr.", rem: lang === "nl" ? "Opm." : "Rem.", note:"Info"};
@@ -21363,6 +21366,56 @@ function cleanBody(s){
   o = o.replace(/\s*[■□☐☒]\s*(?:à remédier|a remedier|te verhelpen|non[- ]conforme?|niet conform|conforme|in orde|à surveiller|op te volgen)?\s*[.]?\s*$/i, "").trim();
   return o || String(s).trim();
 }
+/* ---------- Fiche de l'appareil et du client, lue dans le rapport ---------- */
+const KV = [
+  ["batiment", "B[âa]timent\\s*/\\s*Lieu"], ["marque", "Marque|Merk"], ["type", "Type"], ["genre", "Genre|Soort"],
+  ["fab", "N°\\s*de\\s*fabrication|No\\.?\\s*fabr\\.?|Fabricatienummer|Fabr\\.?\\s*nr\\.?"],
+  ["annee", "Ann[ée]e\\s*de\\s*constr(?:uction)?|Ann[ée]e\\s*constr\\.?|Bouwjaar"],
+  ["miseService", "Date\\s*de\\s*mise\\s*en(?:\\s*service)?|Ingebruikname"],
+  ["charge", "Charge\\s*nominale(?:\\s*\\(kg\\))?|Charge|Nominale\\s*last|Last"],
+  ["vitesse", "Vitesse\\s*nominale(?:\\s*\\(m/s\\))?|Vitesse|Snelheid"],
+  ["arrets", "Nombre\\s*d['’]arr[êe]ts|Arr[êe]ts|Aantal\\s*stopplaatsen|Stopplaatsen"],
+  ["personnes", "Nombre\\s*des?\\s*personnes|Personen"],
+  ["entretien", "Service\\s*d['’]entretien|Entretien|Onderhoudsfirma|Onderhoud"],
+  ["lieu", "Lieu\\s*de\\s*contr[ôo]le|Lieu\\s*de\\s*l['’]examen|Plaats\\s*van\\s*(?:onderzoek|controle)"],
+  ["entrainement", "Entra[îi]nement|Aandrijving"]];
+const KV_RX = new RegExp("(?:^|\\s)(" + KV.map(k => k[1]).join("|") + ")\\s*:\\s*", "gi");
+const KV_KEY = lbl => { for (const [k, rx] of KV) if (new RegExp("^(?:" + rx + ")$", "i").test(lbl.trim())) return k; return null; };
+const titleCase = s => /[a-zà-ÿ]/.test(s) ? s : s.toLowerCase().replace(/(^|[\s/(-])([a-zà-ÿ])/g, (m, a, b) => a + b.toUpperCase()).replace(/\b(Acp|Vme|Asbl|Srl|Sa|Sprl|Bv|Nv)\b/g, x => x.toUpperCase()).replace(/(?!^)\b(Des|De|Du|La|Le|Les|Van|Der|Den|Et)\b/g, x => x.toLowerCase());
+function readFiche(lines){
+  const f = {};
+  lines.forEach((l, i) => {
+    const t = l.t, ms = [...t.matchAll(KV_RX)];
+    ms.forEach((m, j) => {
+      const k = KV_KEY(m[1]); if (!k || f[k]) return;
+      const end = j + 1 < ms.length ? ms[j + 1].index : t.length;
+      let v = t.slice(m.index + m[0].length, end).replace(/\s*\*\s*$/, "").replace(/\s+(CONCLUSION|CONCLUSIE)\s*$/i, "").trim();
+      // valeur coupée en fin de ligne (ex. « COOPMAN » / « ORONA ») : reprendre le 1er mot de la ligne suivante s'il est seul
+      const nx = lines[i + 1] && lines[i + 1].t.trim();
+      const nx0 = nx ? nx.split(/\s+/)[0] : "";
+      if (v && nx && j === ms.length - 1 && /^[A-ZÀ-Ü]{2,}$/.test(v.split(" ").pop()) && /^[A-ZÀ-Ü]{2,}$/.test(nx0)) v += " " + nx0; // « COOPMAN » / « ORONA »
+      else if (v && nx && k === "batiment" && /^(?:d['’]|[a-zà-ÿ]{2,})/.test(nx0) && !nx0.includes(":")) v += " " + nx0; // « hall » / « d'entrée »
+      KV_RX.lastIndex = 0;
+      if (v && v !== ":" && !/^[:.\-]+$/.test(v)) f[k] = v.replace(/\s{2,}/g, " ");
+    });
+    const car = t.match(/Caract[ée]ristiques\s*:\s*(.+)$/i) || t.match(/Kenmerken\s*:\s*(.+)$/i); if (car && !f.nomApp) f.nomApp = car[1].trim();
+  });
+  // client (ACP / VME) et syndic (c/o) dans l'en-tête
+  for (const l of lines.slice(0, 40)) {
+    const a = l.t.match(/\b((?:A\.?C\.?P\.?|V\.?M\.?E\.?|Copropri[ée]t[ée]|Residentie|R[ée]sidence|R[ée]s\.)\s+.+?)\s*$/i);
+    if (a && !f.acp && !/lieu|plaats|:/i.test(l.t.slice(0, a.index))) f.acp = titleCase(a[1].trim());
+    const c = l.t.match(/\bc\/o\s+(.+?)\s*$/i); if (c && !f.syndic) f.syndic = titleCase(c[1].trim());
+  }
+  if (f.lieu) { const i = lines.findIndex(l => /Lieu\s*de\s*contr|Lieu\s*de\s*l.examen|Plaats\s*van/i.test(l.t)); const nx = lines[i + 1] && lines[i + 1].t.trim(); if (nx && /^\d{4}\s+[A-ZÀ-Üa-zà-ÿ-]+$/.test(nx)) f.lieu += ", " + nx; f.lieu = titleCase(f.lieu); if (f.acp && norm(f.lieu).startsWith(norm(f.acp))) f.lieu = f.lieu.slice(f.acp.length).trim(); }
+  if (f.entretien) f.entretien = titleCase(f.entretien);
+  if (f.marque) f.marque = titleCase(f.marque);
+  // entraînement déduit des caractéristiques (jamais du texte général : les listes de contrôle citent tout)
+  const car = norm([f.genre, f.type, f.entrainement].filter(Boolean).join(" "));
+  if (/hydraul|verin|zuiger/.test(car)) f.drive = /indirect/.test(car) ? "hydro-indirect" : /direct/.test(car) ? "hydro-direct" : "hydro";
+  else if (/traction|electrique|cables|kabel|sans salle de mach|zonder machinekamer|gearless|treuil|mrl/.test(car)) f.drive = "traction";
+  if (f.drive) f.driveWhy = [f.genre, f.type].filter(Boolean).join(" · ");
+  return f;
+}
 function readMeta(text){
   const n = norm(text), m = {};
   const orgs = [["normec btv","Normec BTV"],["vincotte","Vinçotte"],["btv","BTV"],["sgs","SGS"],["normec","Normec"],["konhef","Konhef"],["ocb","OCB"],["procontrol","Procontrol"],["aib","AIB-Vinçotte"],["kiwa","Kiwa"],["certinergie","Certinergie"]];
@@ -21393,9 +21446,9 @@ function readMeta(text){
 const MOD_OVERDUE_RX = /travaux de modernisation|modernisering(swerken)?|analyse de risque|risicoanalyse/;
 const MOD_OVERDUE = {
   fr:{e:"Les travaux de mise en conformité issus de l'analyse de risques ne sont pas clôturés. Le SECT a laissé l'ascenseur en service (conclusion B), mais la répétition de cette infraction peut entraîner une conclusion négative et l'arrêt de l'appareil.",
-      s:"Réaliser les travaux de l'analyse de risques (offre de levée des remarques sur base du rapport d'analyse de risques), puis faire réaliser l'inspection avant remise en service par le SECT auteur de l'analyse pour obtenir l'attestation de régularisation."},
+      s:"Réaliser les travaux de l'analyse de risques (offre de levée des remarques sur base du rapport d'analyse de risques), puis faire réaliser l'inspection avant remise en service par le SECT auteur de l'analyse pour obtenir l'attestation de régularisation. Le code DR2240 ne couvre que l'assistance lors de l'inspection SECT : les travaux eux-mêmes restent à chiffrer à partir du rapport d'analyse de risques (point non couvert tant que ce rapport n'est pas analysé)."},
   nl:{e:"De werken uit de risicoanalyse zijn niet afgerond. De EDTC laat de lift in dienst (conclusie B), maar herhaling van deze inbreuk kan tot een negatieve conclusie en buitendienststelling leiden.",
-      s:"De werken uit de risicoanalyse uitvoeren (offerte voor het wegwerken van de opmerkingen op basis van het risicoanalyseverslag) en daarna de keuring vóór herindienststelling laten uitvoeren door de EDTC die de risicoanalyse opmaakte, om het regularisatieattest te bekomen."}};
+      s:"De werken uit de risicoanalyse uitvoeren (offerte voor het wegwerken van de opmerkingen op basis van het risicoanalyseverslag) en daarna de keuring vóór herindienststelling laten uitvoeren door de EDTC die de risicoanalyse opmaakte, om het regularisatieattest te bekomen. Code DR2240 dekt enkel de bijstand bij de EDTC-keuring: de werken zelf moeten nog geprijsd worden op basis van het risicoanalyseverslag."}};
 /* Recomptage indépendant pour les rapports d'inspection : marqueurs « (CONCLUSION: X) » dans la section Infractions */
 function recountSections(lines, rows){
   // Comptage indépendant du découpage : marqueurs « (CONCLUSION: X) » des infractions, sinon lignes-points des sections à remédier
@@ -21465,12 +21518,18 @@ function analyseLines(lines, lang){
   const rows = blocks.map(b => {
     const stx = b.st ? {st:b.st, sure:true} : statusOf(b.raw);
     let rec = recognise(b.ref, b.body, lang);
-    if (b.kind === "inf" && rec.source === "none" && MOD_OVERDUE_RX.test(norm(b.body))) rec = {...rec, e:MOD_OVERDUE[lang].e, s:MOD_OVERDUE[lang].s, zone:"GEN"};
+    if (b.kind === "rem" && rec.source === "none" && meta.echeanceDepassee && meta.echeance && norm(b.body).includes(meta.echeance)) rec = {...rec, e:T[lang].linkedInf(meta.echeance), zone:"GEN"};
+    if (b.kind === "inf" && rec.source === "none" && MOD_OVERDUE_RX.test(norm(b.body))) rec = {...rec, e:MOD_OVERDUE[lang].e, s:MOD_OVERDUE[lang].s, zone:"GEN", code:"DR2240", conf:"probable", source:"theme"};
     return mkRow({ref:b.ref, page:b.page, statut:stx.st, statusGuess:!stx.sure, texte:cleanBody(b.body).slice(0,1200),
       explication:rec.e, solution:rec.s, code:rec.code, intitule:rec.intitule, zone:rec.zone, source:rec.source, confiance:rec.conf, alts:rec.alts, warn:rec.warn,
       mesure:measureOf(b.body, lang), include: stx.st === "remedier" && stx.sure});
   });
   const rc = method === "sections" ? recountSections(lines, rows) : recount(lines, rows);
+  const fiche = readFiche(lines); meta.fiche = fiche;
+  // rapport sans remarque (« Remarques : nihil / néant / geen ») — résultat valable, pas un échec de lecture
+  meta.sansRemarque = /(remarques|opmerkingen|infractions|inbreuken)\s*:?\s*(nihil|neant|aucune?|geen|n\/a|\/)(\s|$)/.test(norm(full)) || /rien d.anormal|niets abnormaals|geen opmerkingen/.test(norm(full));
+  if (fiche.fab && !meta.appareil) meta.appareil = fiche.fab;
+  if (fiche.entretien) meta.entretien = fiche.entretien;
   return {meta, rows, check:{count: rc.count, missing: rc.missing, annonce: meta.annonce || ""}, textLen: full.replace(/\s/g,"").length, pages: new Set(lines.map(l => l.p).filter(Boolean)).size, method};
 }
 function mkRow(o){
@@ -21516,7 +21575,9 @@ function newDossier(){ return {type:DOSSIER_TYPE, schema:2, id:uid(), nom:"", ad
 const appName = (a, i) => [a.nom, a.numero].filter(Boolean).join(" – ") || T[S.lang].appDefault(i + 1);
 
 function driveLabel(a, lang){
-  if (a.entrainement && a.entrainement !== "auto") return DRIVES[lang][a.entrainement] || "";
+  const fi = (a.meta && a.meta.fiche) || {};
+  if (a.entrainement && a.entrainement !== "auto") return (DRIVES[lang][a.entrainement] || "") + (!a.driveManuel && fi.drive === a.entrainement && fi.driveWhy ? ` (${lang === "nl" ? "afgeleid uit" : "déduit de"} « ${fi.driveWhy} » — ${T[lang].toConfirm})` : "");
+  if (fi.drive === "hydro") return lang === "nl" ? "Hydraulisch (direct/indirect te kiezen)" : "Hydraulique (direct/indirect à choisir)";
   const d = norm(a.meta && a.meta.entrainement); if (!d) return "";
   const k = /hydr/.test(d) ? (/indirect/.test(d) ? "hydro-indirect" : /direct/.test(d) ? "hydro-direct" : "") : (/trac/.test(d) ? "traction" : "");
   return k ? DRIVES[lang][k] : (lang === "nl" ? "Hydraulisch" : "Hydraulique");
@@ -21561,7 +21622,9 @@ function renderApps(){
 function renderMeta(){
   const L = T[S.lang], a = curApp(), m = a.meta || {}, it = [];
   const add = (k, v) => { if (v) it.push(`<span>${esc(L[k])} : <b>${esc(v)}</b></span>`); };
-  add("mOrg", m.organisme); add("mDate", m.date_rapport); add("mDev", m.appareil); add("mDrive", driveLabel(a, S.lang)); add("mConcl", m.conclusion); add("mNext", m.prochain); add("mAR", m.analyse); add("mExam", m.examen); add("mEntretien", m.entretien); add("mNextAR", m.prochaineAR);
+  const fi = m.fiche || {};
+  add("mOrg", m.organisme); add("mDate", m.date_rapport); add("mBrand", [fi.marque, fi.type].filter(Boolean).join(" ")); add("mGenre", fi.genre);
+  add("mCarac", [fi.annee && (S.lang === "nl" ? "bouwjaar " : "année ") + fi.annee, fi.charge, fi.vitesse, fi.personnes, fi.arrets && fi.arrets + (S.lang === "nl" ? " stopplaatsen" : " arrêts")].filter(Boolean).join(" · ")); add("mDev", m.appareil); add("mDrive", driveLabel(a, S.lang)); add("mConcl", m.conclusion); add("mNext", m.prochain); add("mAR", m.analyse); add("mExam", m.examen); add("mEntretien", m.entretien); add("mNextAR", m.prochaineAR);
   if (m.incomplet) it.push(`<span class="pill crit">${esc(m.incomplet)}</span>`);
   if (m.echeance) it.push(`<span class="${m.echeanceDepassee ? "pill crit" : ""}">${esc(L.mEcheance)} : <b>${esc(m.echeance)}</b>${m.echeanceDepassee ? " — " + esc(L.mDepassee) : ""}</span>`);
   if (a.fichier) it.push(`<span class="muted">${esc(a.fichier)}${a.analyseLe ? " · " + esc(fmtDate(a.analyseLe)) : ""}</span>`);
@@ -21658,7 +21721,7 @@ async function analyzeInner(){
   const diag = L.diag(S.file ? S.file.name : L.pastedText, res.pages, res.textLen, lines.length, res.method);
   const stale = a.rows.length ? "\n" + L.staleTable(a.fichier || L.pastedText) : "";
   if (res.textLen < 40) { showMsg((S.file ? L.scanned : L.nothing) + "\n" + diag + stale, "warn"); return; }
-  if (!res.rows.length) { showMsg(L.nothing + "\n" + diag + stale, "warn"); return; }
+  if (!res.rows.length && !res.meta.sansRemarque) { showMsg(L.nothing + "\n" + diag + stale, "warn"); return; }
   leaveExample();
   // l'ancien tableau est gardé pour pouvoir le restaurer (plus de double clic)
   const previous = a.rows.length ? {meta:a.meta, rows:a.rows, check:a.check, fichier:a.fichier, analyseLe:a.analyseLe, outLang:a.outLang} : null;
@@ -21668,10 +21731,19 @@ async function analyzeInner(){
     res.meta.incomplet = L.incomplete(res.pages, res.meta._pagesAnnoncees, devCount, res.meta._appAnnonces);
   Object.assign(a, {meta:res.meta, rows:res.rows, check:res.check, outLang:lang, fichier: S.file ? S.file.name : "", analyseLe: nowIso()});
   S.undo = previous ? {appId:a.id, data:previous} : null;
+  // Remplissage automatique depuis le rapport (sans écraser ce que l'utilisateur a saisi)
+  const fi = res.meta.fiche || {}, D = S.dossier;
+  if (!D.nom && fi.acp) D.nom = fi.acp;
+  if (!D.client && fi.syndic) D.client = fi.syndic;
+  if (!D.adresse && fi.lieu) D.adresse = fi.lieu;
   if (!a.numero && res.meta.appareil) a.numero = res.meta.appareil;
+  if (!a.nom && (fi.nomApp || fi.batiment)) a.nom = titleCase(fi.nomApp || fi.batiment).slice(0, 60);
+  if (fi.drive && fi.drive !== "hydro" && !a.driveManuel) a.entrainement = fi.drive;
+  else if (!a.driveManuel) a.entrainement = "auto";
+  fillDossierForm();
   if (!S.dossier.nom && !a.nom && res.meta.appareil) a.nom = "";
   renderDossier(); persist();
-  showMsg(L.done(res.rows.length) + "\n" + diag, "info");
+  showMsg((res.rows.some(r => r.statut === "remedier") || !res.meta.sansRemarque ? L.done(res.rows.length) : L.noRemark(res.meta.conclusion)) + "\n" + diag, "info");
   if (previous) $("#msg").insertAdjacentHTML("beforeend", ` <button id="undo-analyse" class="btn ghost" type="button">${esc(L.undoAnalyse)}</button>`);
   $("#tiles").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
 }
@@ -21720,7 +21792,7 @@ function bindDossier(){
   // champs dossier / appareil
   [["#d-nom","nom"],["#d-adresse","adresse"],["#d-client","client"],["#d-offre","refOffre"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { S.dossier[f] = e.target.value; leaveExample(); persist(); }));
   [["#a-nom","nom"],["#a-num","numero"]].forEach(([sel, f]) => $(sel).addEventListener("input", e => { curApp()[f] = e.target.value; leaveExample(); persist(); renderApps(); }));
-  $("#drive").addEventListener("change", e => { curApp().entrainement = e.target.value; persist(); renderDossier(); });
+  $("#drive").addEventListener("change", e => { curApp().entrainement = e.target.value; curApp().driveManuel = e.target.value !== "auto"; persist(); renderDossier(); });
   $("#outlang").addEventListener("change", e => { curApp().outLang = e.target.value; persist(); renderTable(); renderRecap(); });
   $("#apps").addEventListener("click", e => { const b = e.target.closest("[data-app]"); if (!b) return; S.appIdx = +b.dataset.app; S.file = null; $("#file-info").innerHTML = ""; $("#paste").value = ""; showMsg(""); renderDossier(); });
   $("#a-add").addEventListener("click", () => { leaveExample(); S.dossier.appareils.push(newApp()); S.appIdx = S.dossier.appareils.length - 1; S.file = null; $("#file-info").innerHTML = ""; $("#paste").value = ""; showMsg(""); renderDossier(); persist(); $("#a-nom").focus(); });
@@ -21763,6 +21835,7 @@ function appInfo(a, lang){
   const L = T[lang], m = a.meta || {}, o = [];
   if (a.numero) o.push(`${L.aNum} ${a.numero}`);
   const dr = driveLabel(a, lang); if (dr) o.push(dr);
+  const fi = m.fiche || {}; if (fi.marque || fi.type) o.push([fi.marque, fi.type].filter(Boolean).join(" ")); if (fi.annee) o.push((lang === "nl" ? "bouwjaar " : "année ") + fi.annee);
   if (m.organisme) o.push(m.organisme); if (m.date_rapport) o.push(`${L.mDate} ${m.date_rapport}`); if (m.conclusion) o.push(`${L.mConcl} ${m.conclusion}`); if (m.prochain) o.push(`${L.mNext} ${m.prochain}`); if (m.entretien) o.push(`${L.mEntretien} ${m.entretien}`); if (m.incomplet) o.push(m.incomplet); if (m.analyse) o.push(`${L.mAR} ${m.analyse}`);
   if (m.echeance) o.push(`${L.mEcheance} ${m.echeance}${m.echeanceDepassee ? " (" + L.mDepassee + ")" : ""}`);
   return o.join(" · ");
