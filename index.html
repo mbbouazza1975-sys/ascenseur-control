@@ -328,6 +328,8 @@ tbody tr.grp th{text-align:left;background:var(--bg);padding:8px 10px;font-size:
 .prio-banner.sect-stop{background:var(--sect-stop-soft);border-color:var(--sect-stop)}
 .prio-banner.sect-stop .pb-main strong,.prio-banner.sect-stop .pb-concl{color:var(--sect-stop)}
 .pb-alert{justify-self:start;background:var(--sect-stop);color:#fff;font:800 14px/1 var(--font-display);letter-spacing:.5px;padding:6px 10px;border-radius:6px}
+.pb-meta{font-size:13.5px;color:var(--ink)}
+.pb-meta b{font-weight:800}
 
 </style>
 </head>
@@ -370,7 +372,7 @@ tbody tr.grp th{text-align:left;background:var(--bg);padding:8px 10px;font-size:
       <span id="pb-alert" class="pb-alert hidden"></span>
       <strong id="pb-word"></strong>
       <p id="pb-concl" class="pb-concl"></p>
-      <span id="pb-sub"></span>
+      <span class="pb-meta"><b id="pb-org"></b> · <span id="pb-sub"></span></span>
     </div>
     <div id="pb-counts" class="pb-counts"></div>
   </section>
@@ -21045,7 +21047,7 @@ fr:{
  dossierTitle:"Dossier", dNew:"+ Nouveau dossier", dSaveFile:"Sauvegarder le dossier (fichier)",
  dNom:"N° d'ascenseur Orona et nom du dossier (à saisir)", dNomPh:"ex. 4171083 – Statuaires 48", dAdresse:"Adresse", dClient:"Syndic / gestionnaire (c/o)", dOffre:"Réf. offre",
  appsTitle:"Appareils du dossier", aAdd:"+ Appareil", aDup:"Dupliquer l'appareil", aDel:"Supprimer l'appareil",
- aNom:"Nom de l'appareil", aNomPh:"ex. Bloc A, Ascenseur 1", aNum:"N° de fabrication (rapport)", aOrona:"N° d'ascenseur Orona", aOronaPh:"à saisir (pas dans le rapport)", fabShort:"fab.", appDefault:n=>`Appareil ${n}`, toEnter:"à saisir", rappelTxt:r=>`Remarque répétée (${r}) : risque de conclusion plus sévère au prochain contrôle.`, remConclTxt:c=>`Cette remarque donne à elle seule une conclusion ${c} : priorité absolue.`, pbLbl:["urgent(s)","à traiter","à surveiller"], conclType:"texte type, non trouvé dans le rapport", nameMissing:"n° d'ascenseur Orona et nom du dossier à saisir", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} urgent(s)` : "", `${p2} à traiter`, p3 ? `${p3} à surveiller` : ""].filter(Boolean), pbNone:"Aucun point à remédier",
+ aNom:"Nom de l'appareil", aNomPh:"ex. Bloc A, Ascenseur 1", aNum:"N° de fabrication (rapport)", aOrona:"N° d'ascenseur Orona", aOronaPh:"à saisir (pas dans le rapport)", fabShort:"fab.", appDefault:n=>`Appareil ${n}`, toEnter:"à saisir", squaresNote:"Dans ce rapport, les carrés noirs ■ servent de puces devant chaque point (ex. Van Hellen) : ils n'ont pas été lus comme « à remédier ». Vérifiez le statut de chaque ligne.", rappelTxt:r=>`Remarque répétée (${r}) : risque de conclusion plus sévère au prochain contrôle.`, remConclTxt:c=>`Cette remarque donne à elle seule une conclusion ${c} : priorité absolue.`, pbLbl:["urgent(s)","à traiter","à surveiller"], conclType:"texte type, non trouvé dans le rapport", nameMissing:"n° d'ascenseur Orona et nom du dossier à saisir", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} urgent(s)` : "", `${p2} à traiter`, p3 ? `${p3} à surveiller` : ""].filter(Boolean), pbNone:"Aucun point à remédier",
  confirmDelApp:"Supprimer cet appareil et son tableau ? Cliquez à nouveau pour confirmer.", lastApp:"Un dossier garde au moins un appareil.",
  step1:"Rapport de l'appareil sélectionné", dropTitle:"Déposer le rapport PDF ici", dropHint:"Analyse de risques ou rapport de visite en PDF texte (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"ou coller le texte du rapport", pastePh:"Collez ici le texte (copié depuis le PDF, Word ou un mail). Une remarque par ligne ou par paragraphe.",
@@ -21155,7 +21157,7 @@ nl:{
  dossierTitle:"Dossier", dNew:"+ Nieuw dossier", dSaveFile:"Dossier opslaan (bestand)",
  dNom:"Orona-liftnummer en dossiernaam (in te vullen)", dNomPh:"bv. 4171083 – Statuaires 48", dAdresse:"Adres", dClient:"Syndicus / beheerder (c/o)", dOffre:"Ref. offerte",
  appsTitle:"Toestellen in het dossier", aAdd:"+ Toestel", aDup:"Toestel dupliceren", aDel:"Toestel verwijderen",
- aNom:"Naam van het toestel", aNomPh:"bv. Blok A, Lift 1", aNum:"Fabricagenummer (verslag)", aOrona:"Orona-liftnummer", aOronaPh:"in te vullen (niet in het verslag)", fabShort:"fabr.", appDefault:n=>`Toestel ${n}`, toEnter:"in te vullen", rappelTxt:r=>`Herhaalde opmerking (${r}): risico op een strengere conclusie bij de volgende keuring.`, remConclTxt:c=>`Deze opmerking geeft op zich een conclusie ${c}: absolute prioriteit.`, pbLbl:["dringend","te behandelen","op te volgen"], conclType:"standaardtekst, niet gevonden in het verslag", nameMissing:"Orona-liftnummer en dossiernaam in te vullen", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} dringend` : "", `${p2} te behandelen`, p3 ? `${p3} op te volgen` : ""].filter(Boolean), pbNone:"Geen te verhelpen punten",
+ aNom:"Naam van het toestel", aNomPh:"bv. Blok A, Lift 1", aNum:"Fabricagenummer (verslag)", aOrona:"Orona-liftnummer", aOronaPh:"in te vullen (niet in het verslag)", fabShort:"fabr.", appDefault:n=>`Toestel ${n}`, toEnter:"in te vullen", squaresNote:"In dit verslag staan zwarte vierkantjes ■ als opsommingsteken voor elk punt (bv. Van Hellen): ze zijn niet gelezen als « te verhelpen ». Controleer de status van elke regel.", rappelTxt:r=>`Herhaalde opmerking (${r}): risico op een strengere conclusie bij de volgende keuring.`, remConclTxt:c=>`Deze opmerking geeft op zich een conclusie ${c}: absolute prioriteit.`, pbLbl:["dringend","te behandelen","op te volgen"], conclType:"standaardtekst, niet gevonden in het verslag", nameMissing:"Orona-liftnummer en dossiernaam in te vullen", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} dringend` : "", `${p2} te behandelen`, p3 ? `${p3} op te volgen` : ""].filter(Boolean), pbNone:"Geen te verhelpen punten",
  confirmDelApp:"Dit toestel en zijn tabel verwijderen? Klik nogmaals om te bevestigen.", lastApp:"Een dossier houdt minstens één toestel.",
  step1:"Verslag van het geselecteerde toestel", dropTitle:"PDF-verslag hier neerzetten", dropHint:"Risicoanalyse of keuringsverslag als tekst-PDF (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"of de tekst van het verslag plakken", pastePh:"Plak hier de tekst (gekopieerd uit de PDF, Word of een mail). Eén opmerking per regel of per alinea.",
@@ -21258,7 +21260,7 @@ nl:{
 
 "use strict";
 /* ===================== Outils généraux ===================== */
-const APP_VERSION = "2.3 — 26/11/2026"; window.AC_VERSION = APP_VERSION;
+const APP_VERSION = "2.4 — 26/11/2026"; window.AC_VERSION = APP_VERSION;
 const REF_TYPE = "referentiel-ascenseur-control", PROPS_TYPE = "propositions-ascenseur-control", DOSSIER_TYPE = "dossier-ascenseur-control";
 /* L'intitulé d'offre GOA (avec prix) n'est PAS dans le code source : il vient du référentiel interne (règle 2i/104). */
 const GOA_INTITULE = typeof INITIAL_GOA_INTITULE !== "undefined" ? INITIAL_GOA_INTITULE : "";
@@ -21565,10 +21567,12 @@ function splitSections(lines, lang){
   const cnt = {}; blocks.forEach(b => { if (!b.n) { cnt[b.kind] = (cnt[b.kind] || 0) + 1; b.n = (b.kind === "note" || b.kind === "info") ? "" : String(cnt[b.kind]); } });
   // Konhef & co : « il faut remédier … aux remarques citées » → les remarques sont des points à remédier
   const all = norm(lines.map(l => l.t).join(" "));
-  const remAreDefects = /remedier[^.]{0,60}remarques|remarques[^.]{0,40}(a remedier|doivent etre)|verhelpen[^.]{0,60}opmerkingen|opmerkingen[^.]{0,40}(te verhelpen|verholpen)/.test(all);
+  const remAreDefects = !SQUARE_BULLETS && /remedier[^.]{0,60}remarques|remarques[^.]{0,40}(a remedier|doivent etre)|verhelpen[^.]{0,60}opmerkingen|opmerkingen[^.]{0,40}(te verhelpen|verholpen)/.test(all);
   lbl.info = "Info";
+  const DEFECT = /a revoir|a remedier|a reparer|a corriger|a remplacer|a adapter|a prevoir|a installer|a placer|insuffisant|absence|absent|manque|defectueu|endommag|\busee?\b|hors service|ne fonctionne|ne verrouille|non conforme|te herstellen|na te zien|te verhelpen|te vervangen|ontbreekt|defect|onvoldoende|donne lieu a une conclusion/;
+  const POSITIVE = /entretenu|\bconforme\b|en ordre|prochaine visite|prochain controle|rien d.anormal|\bcorrect|in orde|volgende keuring/;
   return blocks.map(b => ({ref: b.code ? `${lbl[b.kind]} ${b.n}` : `${lbl[b.kind]}${b.n ? " " + b.n : ""}` + (devs.size > 1 && b.dev ? ` (${b.dev})` : ""), raw:b.raw, body:b.body, page:b.page,
-    st: b.kind === "inf" ? "remedier" : b.kind === "rem" && (remAreDefects || /a revoir|a remedier|a reparer|a corriger|a remplacer|te herstellen|na te zien|te verhelpen|te vervangen/.test(norm(b.body))) ? "remedier"
+    st: b.kind === "inf" ? "remedier" : b.kind === "rem" && (remAreDefects || DEFECT.test(norm(b.body))) ? "remedier" : b.kind === "rem" && SQUARE_BULLETS && !POSITIVE.test(norm(b.body)) ? "?"
       : (/conclusion negative|negatieve conclusie|decision negati|interdiction|buiten dienst/.test(norm(b.body)) || b.kind === "info" ? "surveiller" : "info"), dev:b.dev, kind:b.kind}));
 }
 function splitRemarks(lines, lang){
@@ -21714,7 +21718,7 @@ function conclusionText(lines, letter, lang){
 }
 function readMeta(text){
   const n = norm(text), m = {};
-  const orgs = [["normec btv","Normec BTV"],["vincotte","Vinçotte"],["btv","BTV"],["sgs","SGS"],["normec","Normec"],["konhef","Konhef"],["ocb","OCB"],["procontrol","Procontrol"],["aib","AIB-Vinçotte"],["kiwa","Kiwa"],["certinergie","Certinergie"]];
+  const orgs = [["van hellen","Van Hellen"],["vanhellen","Van Hellen"],["normec btv","Normec BTV"],["vincotte","Vinçotte"],["btv","BTV"],["sgs","SGS"],["normec","Normec"],["konhef","Konhef"],["ocb","OCB"],["procontrol","Procontrol"],["aib","AIB-Vinçotte"],["kiwa","Kiwa"],["certinergie","Certinergie"]];
   for (const [k,v] of orgs) if (new RegExp("\\b"+k+"\\b").test(n)) { m.organisme = v; break; }
   const d = text.match(/\b(\d{1,2}[\/.-]\d{1,2}[\/.-](?:19|20)\d{2})\b/); if (d) m.date_rapport = d[1];
   const cnt = rx => (n.match(rx) || []).length;
@@ -21752,7 +21756,7 @@ const MOD_OVERDUE = {
 function recountSections(lines, rows){
   // Comptage indépendant du découpage : marqueurs « (CONCLUSION: X) » des infractions, sinon lignes-points des sections à remédier
   const all = norm(lines.map(l => l.t).join(" "));
-  const remAreDefects = /remedier[^.]{0,60}remarques|remarques[^.]{0,40}(a remedier|doivent etre)|verhelpen[^.]{0,60}opmerkingen|opmerkingen[^.]{0,40}(te verhelpen|verholpen)/.test(all);
+  const remAreDefects = !SQUARE_BULLETS && /remedier[^.]{0,60}remarques|remarques[^.]{0,40}(a remedier|doivent etre)|verhelpen[^.]{0,60}opmerkingen|opmerkingen[^.]{0,40}(te verhelpen|verholpen)/.test(all);
   let sec = null, conc = 0, items = 0;
   for (let li = 0; li < lines.length; li++) {
     const l = lines[li], t = l.t.trim(), h = t.match(SEC_RX);
@@ -21809,14 +21813,27 @@ async function pdfLines(file){
 }
 
 /* Analyse complète d'un texte → lignes du tableau */
+/* Certains organismes (ex. Van Hellen) mettent un carré noir ■ devant TOUS les points : c'est une puce, pas « à remédier ». */
+let SQUARE_BULLETS = false;
+function squaresAreBullets(lines){
+  const full = lines.map(l => l.t).join("\n");
+  if (/van\s*hellen/i.test(full)) return true;
+  if (/[□☐]/.test(full)) return false; // une vraie case vide existe : les ■ sont des cases cochées
+  const items = lines.filter(l => /^\s*[■▪]\s*\S/.test(l.t)).length;
+  return items >= 3 && items / Math.max(1, lines.filter(l => /[■▪]/.test(l.t)).length) >= 0.9;
+}
 function analyseLines(lines, lang){
+  const bullets = squaresAreBullets(lines); SQUARE_BULLETS = bullets;
+  if (bullets) lines = lines.map(l => ({...l, t: l.t.replace(/^(\s*)[■▪]\s*/, "$1* ").replace(/\s*[■▪]\s*/g, " ")}));
+  // titres de section non numérotés (« Remarques : », « Conclusion : B ») → numérotés pour le découpage
+  lines = lines.map(l => /^\s*(remarques|infractions?|opmerkingen|inbreuken|constatations|vaststellingen|notes? d.information|conclusion|conclusie)\s*:/i.test(l.t) && !/^\s*\d/.test(l.t) ? {...l, t: "0. " + l.t.trim().replace(/^./, c => c.toUpperCase())} : l);
   const full = lines.map(l => l.t).join("\n");
   const meta = readMeta(full);
   const {blocks, method} = splitRemarks(lines, lang);
-  meta.methode = method;
+  meta.methode = method; if (bullets) meta.carresPuces = "1";
   if (method === "sections" && !meta.appareil) { const dv = blocks.find(b => b.dev); if (dv) meta.appareil = dv.dev; }
   const rows = blocks.map(b => {
-    const stx = b.st ? {st:b.st, sure:true} : statusOf(b.raw);
+    const stx = b.st === "?" ? {st:"remedier", sure:false} : b.st ? {st:b.st, sure:true} : statusOf(b.raw);
     const rc = norm(b.body).match(/donne lieu a une conclusion\s+([a-ev])\b|geeft aanleiding tot (?:een )?conclusie\s+([a-ev])\b/);
     const remConcl = rc ? (rc[1] || rc[2]).toUpperCase() : (/^[A-E]\d{1,2}$/.test(String(b.ref).split(" ").pop()) ? String(b.ref).split(" ").pop()[0] : "");
     const rappel = (b.body.match(/\((?:rappel|herinnering)[^)]*\)/i) || [""])[0];
@@ -22000,7 +22017,8 @@ function renderBanner(){
   $("#pb-word").textContent = `${L.sectConcl} ${m.conclusionCode || s.letter} — ${L.sect[s.grp]}`;
   $("#pb-alert").textContent = m.alerteRapport ? "⚠ " + m.alerteRapport : ""; $("#pb-alert").classList.toggle("hidden", !m.alerteRapport);
   $("#pb-concl").textContent = m.conclusionTexte ? `« ${m.conclusionTexte} »` + (m.conclusionSource === "type" ? ` (${L.conclType})` : "") : "";
-  $("#pb-sub").textContent = [appName(a, S.appIdx), m.organisme, m.date_rapport, m.echeanceDepassee ? `${L.mEcheance} ${m.echeance} : ${L.mDepassee}` : ""].filter(Boolean).join(" · ");
+  $("#pb-org").textContent = m.organisme ? `${L.mOrg} : ${m.organisme}` : `${L.mOrg} : ${L.notFound}`;
+  $("#pb-sub").textContent = [appName(a, S.appIdx), m.date_rapport, m.echeanceDepassee ? `${L.mEcheance} ${m.echeance} : ${L.mDepassee}` : ""].filter(Boolean).join(" · ");
   const parts = [[1, c[0], L.pbLbl[0]], [2, c[1], L.pbLbl[1]], [3, c[2], L.pbLbl[2]]].filter(x => x[1]);
   $("#pb-counts").innerHTML = parts.length ? parts.map(([p, n, lb]) => `<span class="prio prio-${p}">P${p}</span>${n} ${esc(lb)}`).join(" ") : esc(L.pbNone);
 }
@@ -22014,7 +22032,7 @@ function renderSituation(){
   setDD("sr-next", m.prochain); setDD("sr-ar", m.analyse); setDD("sr-next-ar", m.prochaineAR);
   setDD("sr-echeance", m.echeance, m.echeanceDepassee ? ` <span class="pill crit">${esc(L.mDepassee)}</span>` : "");
   setDD("sr-file", a.fichier ? a.fichier + (a.analyseLe ? " · " + fmtDate(a.analyseLe) : "") : "");
-  const inc = $("#sr-incomplet"); inc.textContent = m.incomplet || ""; inc.classList.toggle("hidden", !m.incomplet);
+  const inc = $("#sr-incomplet"); const notes = [m.incomplet, m.carresPuces ? T[S.lang].squaresNote : ""].filter(Boolean); inc.textContent = notes.join(" "); inc.classList.toggle("hidden", !notes.length);
 }
 function renderTiles(){
   const L = T[S.lang], a = curApp(), rows = a.rows, rem = rows.filter(r => r.statut === "remedier").length;
