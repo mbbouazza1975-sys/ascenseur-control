@@ -21034,9 +21034,9 @@ fr:{
  title:"Application Ascenseur Control", subtitle:"Analyse de risques ou rapport de visite → tableau des remarques, solutions et codes Orona", offline:"Sans internet ni IA",
  navDossier:"Dossier en cours", navDossiers:"Mes dossiers", navRef:"Référentiel des codes", navAide:"Mode d'emploi",
  dossierTitle:"Dossier", dNew:"+ Nouveau dossier", dSaveFile:"Sauvegarder le dossier (fichier)",
- dNom:"Nom du dossier (à saisir)", dNomPh:"ex. Statuaires 48 – remarques BTV 2026", dAdresse:"Adresse", dClient:"Syndic / gestionnaire (c/o)", dOffre:"Réf. offre",
+ dNom:"N° d'ascenseur Orona et nom du dossier (à saisir)", dNomPh:"ex. 4171083 – Statuaires 48", dAdresse:"Adresse", dClient:"Syndic / gestionnaire (c/o)", dOffre:"Réf. offre",
  appsTitle:"Appareils du dossier", aAdd:"+ Appareil", aDup:"Dupliquer l'appareil", aDel:"Supprimer l'appareil",
- aNom:"Nom de l'appareil", aNomPh:"ex. Bloc A, Ascenseur 1", aNum:"N° de fabrication (rapport)", aOrona:"N° d'ascenseur Orona", aOronaPh:"à saisir (pas dans le rapport)", fabShort:"fab.", appDefault:n=>`Appareil ${n}`, toEnter:"à saisir", nameMissing:"nom du dossier à saisir", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} urgent(s)` : "", `${p2} à traiter`, p3 ? `${p3} à surveiller` : ""].filter(Boolean), pbNone:"Aucun point à remédier",
+ aNom:"Nom de l'appareil", aNomPh:"ex. Bloc A, Ascenseur 1", aNum:"N° de fabrication (rapport)", aOrona:"N° d'ascenseur Orona", aOronaPh:"à saisir (pas dans le rapport)", fabShort:"fab.", appDefault:n=>`Appareil ${n}`, toEnter:"à saisir", nameMissing:"n° d'ascenseur Orona et nom du dossier à saisir", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} urgent(s)` : "", `${p2} à traiter`, p3 ? `${p3} à surveiller` : ""].filter(Boolean), pbNone:"Aucun point à remédier",
  confirmDelApp:"Supprimer cet appareil et son tableau ? Cliquez à nouveau pour confirmer.", lastApp:"Un dossier garde au moins un appareil.",
  step1:"Rapport de l'appareil sélectionné", dropTitle:"Déposer le rapport PDF ici", dropHint:"Analyse de risques ou rapport de visite en PDF texte (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"ou coller le texte du rapport", pastePh:"Collez ici le texte (copié depuis le PDF, Word ou un mail). Une remarque par ligne ou par paragraphe.",
@@ -21144,9 +21144,9 @@ nl:{
  title:"Application Ascenseur Control", subtitle:"Risicoanalyse of keuringsverslag → tabel met opmerkingen, oplossingen en Orona-codes", offline:"Zonder internet en zonder AI",
  navDossier:"Huidig dossier", navDossiers:"Mijn dossiers", navRef:"Codereferentie", navAide:"Handleiding",
  dossierTitle:"Dossier", dNew:"+ Nieuw dossier", dSaveFile:"Dossier opslaan (bestand)",
- dNom:"Dossiernaam (in te vullen)", dNomPh:"bv. Statuaires 48 – opmerkingen BTV 2026", dAdresse:"Adres", dClient:"Syndicus / beheerder (c/o)", dOffre:"Ref. offerte",
+ dNom:"Orona-liftnummer en dossiernaam (in te vullen)", dNomPh:"bv. 4171083 – Statuaires 48", dAdresse:"Adres", dClient:"Syndicus / beheerder (c/o)", dOffre:"Ref. offerte",
  appsTitle:"Toestellen in het dossier", aAdd:"+ Toestel", aDup:"Toestel dupliceren", aDel:"Toestel verwijderen",
- aNom:"Naam van het toestel", aNomPh:"bv. Blok A, Lift 1", aNum:"Fabricagenummer (verslag)", aOrona:"Orona-liftnummer", aOronaPh:"in te vullen (niet in het verslag)", fabShort:"fabr.", appDefault:n=>`Toestel ${n}`, toEnter:"in te vullen", nameMissing:"dossiernaam in te vullen", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} dringend` : "", `${p2} te behandelen`, p3 ? `${p3} op te volgen` : ""].filter(Boolean), pbNone:"Geen te verhelpen punten",
+ aNom:"Naam van het toestel", aNomPh:"bv. Blok A, Lift 1", aNum:"Fabricagenummer (verslag)", aOrona:"Orona-liftnummer", aOronaPh:"in te vullen (niet in het verslag)", fabShort:"fabr.", appDefault:n=>`Toestel ${n}`, toEnter:"in te vullen", nameMissing:"Orona-liftnummer en dossiernaam in te vullen", pbCounts:(p1,p2,p3)=>[p1 ? `${p1} dringend` : "", `${p2} te behandelen`, p3 ? `${p3} op te volgen` : ""].filter(Boolean), pbNone:"Geen te verhelpen punten",
  confirmDelApp:"Dit toestel en zijn tabel verwijderen? Klik nogmaals om te bevestigen.", lastApp:"Een dossier houdt minstens één toestel.",
  step1:"Verslag van het geselecteerde toestel", dropTitle:"PDF-verslag hier neerzetten", dropHint:"Risicoanalyse of keuringsverslag als tekst-PDF (Vinçotte, BTV, SGS, Normec, Konhef, OCB, Procontrol…)",
  orPaste:"of de tekst van het verslag plakken", pastePh:"Plak hier de tekst (gekopieerd uit de PDF, Word of een mail). Eén opmerking per regel of per alinea.",
@@ -22172,7 +22172,7 @@ function docLang(){ return curApp().outLang || S.lang; }
 function infoLines(lang){
   const L = T[lang], d = S.dossier, out = [];
   const c = ensureClient(d).client;
-  if (d.nom) out.push([L.dNom, d.nom]); if (c.acp && c.acp !== d.nom) out.push([L.clAcp, c.acp]); if (c.immRue || c.immCp) out.push([L.clImmRue, [c.immRue, c.immCp].filter(Boolean).join(", ")]);
+  if (d.nom) out.push([L.dNom.replace(/\s*\((à saisir|in te vullen)\)/, ""), d.nom]); if (c.acp && c.acp !== d.nom) out.push([L.clAcp, c.acp]); if (c.immRue || c.immCp) out.push([L.clImmRue, [c.immRue, c.immCp].filter(Boolean).join(", ")]);
   if (c.syndic) out.push([L.clSyndic, [c.syndic, c.contact].filter(Boolean).join(" — ")]); if (c.syndicAdr) out.push([L.clSyndicAdr, c.syndicAdr]); if (c.tel) out.push([L.clTel, c.tel]); if (c.email) out.push([L.clEmail, c.email]);
   if (c.refRapport) out.push([L.clRefRapport, c.refRapport]); if (c.refClient) out.push([L.clRefClient, c.refClient]); if (d.refOffre) out.push([L.dOffre, d.refOffre]);
   return out;
